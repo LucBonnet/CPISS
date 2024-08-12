@@ -1,8 +1,11 @@
 import os
 import torch
 from PIL import Image
+from typing import List
 from torchvision import transforms
 from torchvision.models import inception_v3, Inception_V3_Weights
+
+CLASSES_NAMES_FILE =  'imagenet_classes.txt'
 
 class Inception_V3:
   def __init__(self): 
@@ -11,15 +14,15 @@ class Inception_V3:
 
     if torch.cuda.is_available():
       self.device = 'cuda'
-      self.model.to('cuda')
+      self.model.to(self.device)
     else:
       self.device = 'cpu'
 
-    classes_file_path = os.path.join(os.path.dirname(__file__), 'imagenet_classes.txt')
+    classes_file_path = os.path.join(os.path.dirname(__file__), CLASSES_NAMES_FILE)
     with open(classes_file_path, "r") as f:
       self.categories = [s.strip() for s in f.readlines()]
 
-  def predict(self, img_path):  
+  def predict(self, img_path) -> List[float]:  
     input_image = Image.open(img_path)
 
     preprocess = transforms.Compose([

@@ -1,6 +1,11 @@
 import random
-import time
 import os
+
+IMAGES_PATH = './Generalist961/'
+IMAGE_NAME_PREFIX = 'image'
+IMAGE_FILE_EXTENSION = '.jpg'
+
+USERS_PATH = './users_created_data'
 
 top_view = (1, 30)
 airplane = (31, 123)
@@ -19,32 +24,29 @@ categories = [top_view, airplane, elephant, arrow, lion, bear, polar_bear, perso
 num_of_users = 10
 
 def clearData():
-  users_files = os.listdir('./users_created_data/')
+  users_files = os.listdir(USERS_PATH)
   for file in users_files:
-    os.remove('./users_created_data/' + file)
-
-def generateUserId():
-  rnd_code = random.randint(1000, 9999)
-  timestamp = round(time.time() * 1000000)
-  return str(timestamp) + str(rnd_code)
+    os.remove(USERS_PATH + file)
 
 users = {}
 
 def createData():
   for i in range(num_of_users):  
-    user_id = str(i+1)
+    user_id = str( i + 1)
 
     file_name = user_id + '.txt'
-    file = open('./users_created_data/' + file_name, 'w')
+    file = open(USERS_PATH + file_name, 'w')
 
     category_index = random.randint(0, len(categories) - 1)
     users[user_id] = category_index
     category = categories[category_index]
     tam_category = category[1] - category[0] + 1
     num_of_images = random.randint(10, tam_category)
-    for j in range(num_of_images):
+
+    for None in range(num_of_images):
       image_num = random.randint(category[0], category[1])
-      file.write('./Generalist961/image' + str(image_num) + '.jpg\n')
+      img_full_path = IMAGES_PATH + IMAGE_NAME_PREFIX + str(image_num) + IMAGE_FILE_EXTENSION
+      file.write(img_full_path + '\n')
 
     file.close()
     

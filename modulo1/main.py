@@ -1,78 +1,71 @@
-from Inception_V3 import Inception_V3
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import os
+from typing import List
+import numpy as np
 import math
+import os
 
-PLOT_DATA = True
+from Inception_V3 import Inception_V3
+
+USERS_PATH = './users_created_data/'
 
 model = Inception_V3()
 print("Modelo carregado")
 
-img1_path = "./imgs/img4.jpg"
-result = model.predict(img1_path)
-print("Imagem classificada")
+def getUserImages(user_id: str): 
+  file = open(USERS_PATH + user_id + '.txt', 'r')  
+  user_images = [img.strip() for img in file.readlines()]
+  file.close()
 
-if PLOT_DATA:
-  fig, axs = plt.subplots(1, 2)
-  img = mpimg.imread(img1_path)
-  axs[0].plot(result)
-  axs[1].imshow(img)
-  axs[1].axis("off")
-  plt.show()
+  return user_images
 
-categories = model.topCategories(result, 5)
-for category, value in categories:
-  print(category + ":" , value)
+def calcUserPreference(user_images: List[str]):
+  num_of_categories = len(model.categories)
+  user_preferences = np.full(num_of_categories, 0, dtype=float)
 
-users_imgs = []
-users_path = os.listdir('users')
-users_path = list(sorted(users_path))
-for user_path in users_path:
-  users_imgs.append([os.path.join('users', user_path, file) for file in os.listdir(os.path.join("users", user_path))])
-
-print(users_imgs)
-
-users_preferences = []
-for user in users_imgs:
-  user_preferences = []
-  for img_path in user:
-    result = model.predict(img_path)
-    user_preferences.append(result)
-  users_preferences.append(user_preferences)
-
-mean_users_preferences = []
-for user_preferences in users_preferences:
-  mean_user_preferences = []
-  for i in range(len(model.categories)):
-    prob_sum = 0
-    for j in range(len(user_preferences)):
-      prob_sum += user_preferences[j][i]
-    mean = prob_sum / len(user_preferences)
-    mean_user_preferences.append(mean)
-  mean_users_preferences.append(mean_user_preferences)
-
-print((len(mean_users_preferences), len(mean_users_preferences[0])))
-
-for user in mean_users_preferences:
-  plt.plot(user)
-  plt.title("Usuário " + str(i + 1))
-  plt.show()
-  print(model.topCategories(user, 10))
-
-tam = len(mean_users_preferences)
-for i in range(tam):
-  for j in range(i+1, tam):
-    userA = mean_users_preferences[i]
-    userB = mean_users_preferences[j]
-
-    Dkl = 0
-    for k in range(len(userA)):
-      Dkl += userA[k] * math.log(userA[k] / userB[k])
+  for image in user_images:
+    img_categories = model.predict(image) 
+    user_preferences += img_categories
   
-    print("[" + str(i + 1) + ", " + str(j + 1) + "]:", Dkl)
+  user_preferences = np.divide(user_preferences, len(user_images))
 
-    if PLOT_DATA: 
-      plt.plot(userA)
-      plt.plot(userB)
-      plt.show()
+  return user_preferences
+
+def calcUsersDivergence(userA_prefs: List[float], userB_prefs: List[float]):
+  num_of_categories = len(userA_prefs)
+
+  Dkl_A_B = 0
+  Dkl_B_A = 0
+
+  for i in range(num_of_categories):
+    Dkl_A_B += userA_prefs[i] * math.log(userA_prefs[i] / userB_prefs[i])
+    Dkl_B_A += userB_prefs[i] * math.log(userB_prefs[i] / userA_prefs[i])
+
+    Dkl = Dkl_A_B + Dkl_B_A
+
+  return Dkl
+
+def test():
+  users = os.listdir(USERS_PATH)
+
+  users_preferences = {}
+
+  for user in users:
+    user_id = user.replace(".txt", "")
+    user_images = getUserImages(user_id)
+
+    users_preferences[user_id] = calcUserPreference(user_images)
+    print("Preferências do usuário " + user_id)
+  
+  users_ids = np.array(list(users_preferences.keys()))
+  for i in range(len(users_preferences)):
+    for j in range(i + 1, len(users_preferences)):
+      userA = users_preferences[users_ids[i]]
+      userB = users_preferences[users_ids[j]]
+
+      divergence = calcUsersDivergence(userA, userB)
+      print(f"""[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}""")
+
+test()
+
+
+
+      
