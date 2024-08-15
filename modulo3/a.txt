@@ -1,0 +1,4 @@
+Entrada: 1 RG
+
+Saída: Grafo com N pessoas conectadas 
+à primeira pessoa
