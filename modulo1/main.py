@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Tuple, Dict
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import math
 import os
 
 from Inception_V3 import Inception_V3
-
 
 IMAGES_PATH = os.path.join(os.path.dirname(__file__), '..', 'Imagens_usuarios', 'Generalist961')
 USERS_PATH = os.path.join(os.path.dirname(__file__), '..', 'Imagens_usuarios', 'users_data')
@@ -45,7 +46,7 @@ def calcUsersDivergence(userA_prefs: List[float], userB_prefs: List[float]):
 
   return Dkl
 
-def main() -> List[List[float]]:
+def main() -> nx.Graph:
   users = os.listdir(USERS_PATH)
   users = list(sorted(users, key=lambda user: int(user.replace('.txt', ''))))
 
@@ -61,6 +62,7 @@ def main() -> List[List[float]]:
   num_of_user = len(users_preferences)
 
   users_ids = np.array(list(users_preferences.keys()))
+
   users_divergences = np.empty((num_of_user, num_of_user), dtype=float)
   max_divergence = 0
   min_divergence = None
@@ -86,7 +88,7 @@ def main() -> List[List[float]]:
       users_divergences[i][j] = divergence
       users_divergences[j][i] = divergence
 
-      # print(f"""[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}""")
+      print(f"""[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}""")
 
   def normalize(value):
     return (1 - (value - min_divergence) / (max_divergence - min_divergence))
@@ -95,11 +97,38 @@ def main() -> List[List[float]]:
 
   users_divergences = normalizer(users_divergences)
 
+  G = nx.Graph()
+  for user_id in users_ids:
+    G.add_node(user_id)
+
+  for i in range(num_of_user):
+    for j in range(num_of_user):
+      if i == j:
+        continue
+      
+      weight = users_divergences[i][j]
+      if weight == 0:
+        continue
+
+      G.add_edge(users_ids[i], users_ids[j], weight=users_divergences[i][j])
+      G.add_edge(users_ids[j], users_ids[i], weight=users_divergences[j][i])
+
   float_formatter = "{:.4f}".format
   np.set_printoptions(formatter={'float_kind':float_formatter})
-  print(users_divergences)
 
-  return users_divergences
+  user_id_reference = {}
+  for i, user_id in enumerate(users_ids): 
+    user_id_reference[user_id] = i
+  
+
+  plt.figure(figsize=(6, 6))
+  pos = nx.spring_layout(G, k=3)  
+  nx.draw(G, pos, with_labels=True, node_color='#2C4C7C', edge_color='#3F5BD2', font_color="#FFFFFF", node_size=250, width=0.5)
+  edge_labels = dict([((u,v,), f"{d['weight']:.2f}") for u,v,d in G.edges(data=True)])
+  nx.draw_networkx_edge_labels(G, pos, edge_labels)
+  plt.show()
+
+  return G
 
 main()
 
