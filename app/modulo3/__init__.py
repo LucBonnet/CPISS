@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import psycopg2  # Biblioteca responsável por usar o PostgreSQL no Python
+import app.database.database as db
 
 # Credenciais de conexão
 host = "localhost"
@@ -37,7 +38,7 @@ class Modulo3:
 
                 # Comando SQL para consultar o RG, suas conexões e crimes
                 query_rg = """
-                SELECT "RG", "Conexoes", "Crimes" FROM historico WHERE "RG" = %s;
+                SELECT "RG", "Apelido" , "Conexoes", "Crimes" FROM historico WHERE "RG" = %s;
                 """
 
                 # Executar a consulta para o RG específico
@@ -45,7 +46,44 @@ class Modulo3:
                 result = cur.fetchone()
 
                 if result:
-                    rg, conexoes, crimes = result
+                    rg, apelido, conexoes, crimes = result
+
+                    # Contagem de crimes e conexões
+                    num_crimes = len(crimes) if crimes else 0
+                    num_conexoes = len(conexoes) if conexoes else 0
+                    
+                    # Salvar crimes e conexões em vetores
+                    crime_vetor = crimes if crimes else []
+                    conexao_vetor = conexoes if conexoes else []
+
+                    # Imprimir as informações do RG principal
+                    print(f"RG Principal: {rg}")
+                    print(f"Crimes ({num_crimes}): {crimes}")
+                    print(f"Conexões ({num_conexoes}): {conexoes}")
+                    print("-" * 50)
+                    db.connect()
+                    sql = """INSERT INTO grafo (etapa) VALUES (?)"""
+                    db.execute(sql, "2")
+        
+                    # salva a pessoa no banco de dados da pessoa
+                    sql = """INSERT INTO pessoas (id, nome, nivel_participacao, importancia) VALUES (?,?,?,?)"""
+                    array_of_tuples = (rg, apelido,1,0)
+                    db.execute(sql, array_of_tuples)
+                    
+                    # salva os fatos no banco de dados das pessoa_fato
+                    for i in range(num_crimes):
+                        print(crime_vetor[i])
+                        sql = """INSERT INTO pessoa_fato (id_pessoa, id_fato) VALUES (?,?)"""
+                        array_of_tuples = (rg, crime_vetor[i])
+                        db.execute(sql, array_of_tuples)
+                    
+                    # salva as conexões no banco de dados das conexões
+                    for i in range(num_conexoes):
+                        print(conexao_vetor[i])
+                        sql = """INSERT INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"""
+                        array_of_tuples = (rg, conexao_vetor[i],1,2)
+                        db.execute(sql, array_of_tuples)
+                    db.close()
 
                     # Criar um grafo direcionado para o RG
                     G = nx.DiGraph()
@@ -124,7 +162,7 @@ class Modulo3:
                 print("Conexão com o PostgreSQL fechada.")
 
     def main(self):
-        start_rg = "123456789"  # Substituir pelo RG desejado
+        start_rg = "1"  # Substituir pelo RG desejado
         """Função principal para iniciar a criação dos grafos e iteração das conexões."""
         visited_rg = set()  # Conjunto para rastrear RGs visitados
         to_visit = [start_rg]  # Lista de RGs a serem visitados
@@ -144,7 +182,6 @@ class Modulo3:
 
 
 # Teste da classe Modulo3
-def test():
-  m3 = Modulo3()
-
-  G = m3.main()
+if __name__ == "__main__":
+    m3 = Modulo3()
+    m3.main()
