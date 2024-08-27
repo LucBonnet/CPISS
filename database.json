@@ -1,0 +1,40 @@
+{
+    "grafos": [
+        { 
+            "pessoas": [
+                {
+                    "id": 1,
+                    "nome": "Nome 1",
+                    "np": 1,
+                    "importancia": 0,
+                },
+                {
+                    "id": 2,
+                    "nome": "Nome 2",
+                    "np": 1,
+                    "importancia": 0
+                }
+            ],
+            "fatos": [
+                {
+                    "id": 1,
+                    "nome": "Nome do fato"
+                }
+            ],
+            "pessoa_fato": [
+                {
+                    "id_pessoa": 1,
+                    "id_fato": 1,
+                    "valor": 0.3
+                }
+            ],
+            "conexoes": [
+                {
+                    "id_pessoa_A": 1,
+                    "id_pessoa_B": 2,
+                    "peso": 1
+                }
+            ]
+        }
+    ]
+}

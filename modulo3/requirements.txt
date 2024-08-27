@@ -1,3 +1,0 @@
-networkx
-pyplot
-psycopg2

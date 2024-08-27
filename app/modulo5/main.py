@@ -19,7 +19,6 @@ class Modulo5:
   
   @staticmethod
   def combineEdgesWeights(weight1: float, weight2: float):
-    print(weight1, weight2, (weight1 + weight2) / 2)
     return (weight1 + weight2) / 2
   
   def combine(self, *graphs):

@@ -1,11 +1,12 @@
 import psycopg2
+import os
 
 # Defina suas credenciais de conexão
-host = "localhost"
-database = "TCC3"
-user = "agent1"
-password = "12"
-port = "5432"
+host = os.getenv("HOST")
+database = os.getenv("DATABASE")
+user = os.getenv("USER")
+password = os.getenv("PASSWORD")
+port = os.getenv("PORT")
 
 def connect_to_db():
     """Estabelece uma conexão com o banco de dados PostgreSQL."""
