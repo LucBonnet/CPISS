@@ -4,7 +4,7 @@ import os
 IMAGE_NAME_PREFIX = 'image'
 IMAGE_FILE_EXTENSION = '.jpg'
 
-USERS_PATH = './users_data/'
+USERS_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'users_data')
 
 top_view = (1, 30)
 airplane = (31, 123)
@@ -20,21 +20,20 @@ car = (787, 961)
 
 categories = [top_view, airplane, elephant, arrow, lion, bear, polar_bear, person, sunset, texture, car]
 
-num_of_users = 10
-
 def clearData():
   users_files = os.listdir(USERS_PATH)
   for file in users_files:
-    os.remove(USERS_PATH + file)
+    os.remove(USERS_PATH + "/" + file)
 
 users = {}
 
-def createData():
+def createData(ids):
+  num_of_users = len(ids)
   for i in range(num_of_users):  
-    user_id = str( i + 1)
+    user_id = str(ids[i])
 
     file_name = user_id + '.txt'
-    file = open(USERS_PATH + file_name, 'w')
+    file = open(USERS_PATH + "/" + file_name, 'w')
 
     category_index = random.randint(0, len(categories) - 1)
     users[user_id] = category_index
@@ -50,11 +49,15 @@ def createData():
     file.close()
     
 
-def main(): 
+def main(ids): 
   clearData()
 
-  createData()
+  createData(ids)
   for user_id, category_id in users.items():
     print(f"""{user_id} => {category_id}""")
 
-main()
+def sample():
+  num_of_users = 50
+  ids = list(range(1, num_of_users + 1))
+
+  main(ids)

@@ -1,7 +1,9 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import psycopg2  # Biblioteca responsável por usar o PostgreSQL no Python
-import app.database.database as db
+
+from app.database.database import db
+from app.utils.randomId import generateRandomId
 
 # Credenciais de conexão
 host = "localhost"
@@ -61,9 +63,12 @@ class Modulo3:
                     print(f"Crimes ({num_crimes}): {crimes}")
                     print(f"Conexões ({num_conexoes}): {conexoes}")
                     print("-" * 50)
+
+                    id_grafo = generateRandomId()
+
                     db.connect()
-                    sql = """INSERT INTO grafo (etapa) VALUES (?)"""
-                    db.execute(sql, "2")
+                    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
+                    db.execute(sql, (id_grafo, 2))
         
                     # salva a pessoa no banco de dados da pessoa
                     sql = """INSERT INTO pessoas (id, nome, nivel_participacao, importancia) VALUES (?,?,?,?)"""
@@ -161,9 +166,9 @@ class Modulo3:
                 conn.close()
                 print("Conexão com o PostgreSQL fechada.")
 
-    def main(self):
-        start_rg = "1"  # Substituir pelo RG desejado
+    def find_connections(self, rg):
         """Função principal para iniciar a criação dos grafos e iteração das conexões."""
+        start_rg = rg  # Substituir pelo RG desejado
         visited_rg = set()  # Conjunto para rastrear RGs visitados
         to_visit = [start_rg]  # Lista de RGs a serem visitados
         all_conexoes = set()  # Conjunto para rastrear todas as conexões
@@ -182,6 +187,13 @@ class Modulo3:
                     conexao for conexao in new_conexoes if conexao not in visited_rg)
 
         print("Todos os grafos foram desenhados.")
+
+    def main(self, persons):
+        for person in persons:
+            self.find_connections(person[1])
+
+
+        
 
 
 # Teste da classe Modulo3

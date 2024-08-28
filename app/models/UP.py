@@ -1,8 +1,9 @@
 from typing import List, Tuple
 
 class UP:
-  def __init__(self, up_id, name, np=1) -> None:
+  def __init__(self, up_id, document, name, np=1) -> None:
     self.up_id = up_id
+    self.document = document
     self.name = name
     self.facts: List[Tuple]  = []
     self.participation_level: int = np
