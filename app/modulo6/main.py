@@ -1,6 +1,6 @@
 import networkx as nx
 
-from UP import UP
+from app.models.UP import UP
 
 class Modulo6:
   def __init__(self, graph: nx.Graph) -> None:

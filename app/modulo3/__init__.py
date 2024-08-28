@@ -173,6 +173,9 @@ class Modulo3:
             if current_rg not in visited_rg:
                 new_conexoes = self.create_graph_for_rg(
                     current_rg, visited_rg, all_conexoes)
+                
+                if not new_conexoes:
+                    continue
 
                 # Atualizar a lista de RGs a serem visitados com novas conexões
                 to_visit.extend(

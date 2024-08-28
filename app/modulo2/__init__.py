@@ -1,14 +1,17 @@
 import app.database.database as db
 
-pessoas = ['Nome1', 'Nome2', 'Nome3', 'Nome4', 'Nome5', 'Nome6', 'Nome7', 'Nome8']
+pessoas = [('Nome1'), ('Nome2'), ('Nome3'), ('Nome4')]
 
 class Modulo2():
     def main(self):
+        print("Módulo 2")
         db.connect()
 
+        id_pessoas = []
         for pessoa in pessoas:
             sql = """INSERT INTO pessoas (nome) VALUES (?);"""
-            db.execute(sql, (pessoa,))
-
+            id_atual = db.insert(sql, (pessoa,))
+            id_pessoas.append(id_atual)
         db.close()
-        print("Modulo 2")
+
+        return id_pessoas
