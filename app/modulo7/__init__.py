@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from app.database.database import db
+from app.models.UP import UP
 
 class Modulo7:
   def __init__(self):
@@ -28,9 +29,11 @@ class Modulo7:
       db.close()
     
       for up in result:
-        up_id, rg, name, np, importance = up
-        self.graph.add_node(up_id)
-        labels[up_id] = f"{rg}\n{(round(importance * 100)):.2f}%"
+        up = UP(*up)
+        print(up)
+        # up_id, rg, name, np, importance = up
+        # self.graph.add_node(up_id)
+        # labels[up_id] = f"{rg}\n{(round(importance * 100)):.2f}%"
 
     sql = "SELECT max(id) FROM conexoes"
     db.connect()
@@ -55,10 +58,10 @@ class Modulo7:
 
         self.graph.add_edge(up_a_id, up_b_id, weight=weight)
     
-    plt.figure(figsize=(6, 6))
-    pos = nx.spring_layout(self.graph, k=3)  
-    nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color='#3F5BD2', font_color="#FFFFFF", node_size=2000, width=0.5)
-    edge_labels = dict([((u,v,), f"{d['weight']:.2f}") for u,v,d in self.graph.edges(data=True)])
-    nx.draw_networkx_labels(self.graph, pos, labels, font_color="#FFFFFF", font_size=10)
-    nx.draw_networkx_edge_labels(self.graph, pos, edge_labels)
-    plt.show()
+    # plt.figure(figsize=(6, 6))
+    # pos = nx.spring_layout(self.graph, k=3)  
+    # nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color='#3F5BD2', font_color="#FFFFFF", node_size=2000, width=0.5)
+    # edge_labels = dict([((u,v,), f"{d['weight']:.2f}") for u,v,d in self.graph.edges(data=True)])
+    # nx.draw_networkx_labels(self.graph, pos, labels, font_color="#FFFFFF", font_size=10)
+    # nx.draw_networkx_edge_labels(self.graph, pos, edge_labels)
+    # plt.show()

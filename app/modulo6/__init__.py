@@ -58,12 +58,12 @@ class Modulo6:
     print(f"w = {self.omega}")
     
   def __updateNP(self, ups_ids, ups_np, max_np):
-    sql = "INSERT INTO pessoa_fato (id_pessoa, id_fato, valor) VALUES (?,?,?)"
+    sql = "UPDATE pessoas SET np_formatado = ? WHERE id = ?"
     
     db.connect()
     for i, up_id in enumerate(ups_ids):
-      new_fact = self.__calcNP(ups_np[i], max_np)
-      db.insert(sql, (up_id, 0, new_fact))
+      np_value = self.__calcNP(ups_np[i], max_np)
+      db.insert(sql, (np_value, up_id))
     db.close()
 
   def __setNP(self):
@@ -122,7 +122,15 @@ class Modulo6:
       result = db.execute(sql, (up_id,))
       db.close()
 
-      facts = [fact[3] for fact in result]
+      facts = []
+      for person_fact in result:
+        fact_id = person_fact[2]
+        sql = "SELECT valor FROM fatos WHERE id = ?"
+        db.connect()
+        value = db.execute(sql, (fact_id,))[0][0]
+        db.close()
+        facts.append(value)
+
       importance = self.__p(facts)
 
       sql = "UPDATE pessoas SET importancia = ? WHERE id = ?"

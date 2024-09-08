@@ -135,7 +135,7 @@ class Modulo1:
       formatted_values = ";".join([format(pref, "e") for pref in preferences])
 
       db.connect()
-      sql = """INSERT INTO preferencias (id_pessoa, valores) VALUES (?,?)"""
+      sql = """INSERT OR REPLACE INTO preferencias (id_pessoa, valores) VALUES (?,?)"""
       db.execute(sql, (int(user_id), formatted_values))
       db.close()
       

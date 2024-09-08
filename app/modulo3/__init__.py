@@ -66,10 +66,16 @@ class Modulo3:
                 result = db_policia.execute(sql, (current_rg,))
                 db_policia.close()
 
-                for fact_id in result:
+                for fact in result:
+                    fact_id = fact[0]
+                    sql = "INSERT OR IGNORE INTO fatos (id) VALUES (?)"
+                    db.connect()
+                    db.insert(sql, (fact_id,))
+                    db.close()
+
                     sql = "INSERT INTO pessoa_fato (id_pessoa,id_fato) VALUES (?,?)"
                     db.connect()
-                    db.insert(sql, (person_a_id,fact_id[0]))
+                    db.insert(sql, (person_a_id, fact_id))
                     db.close()
 
                 self.visited_rg.add(str(current_rg))
