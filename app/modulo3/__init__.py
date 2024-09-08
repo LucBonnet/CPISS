@@ -1,202 +1,118 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import psycopg2  # Biblioteca responsável por usar o PostgreSQL no Python
 
 from app.database.database import db
+from app.modulo3.database.database import db_policia
 from app.utils.randomId import generateRandomId
 
 # Credenciais de conexão
-host = "localhost"
-database = "TCC3"  # Banco de dados
-user = "agent1"  # Pessoa que vai modificar
-password = "12"  # Senha do Banco de Dados
-port = "5432"
+# host = "localhost"
+# database = "TCC3"  # Banco de dados
+# user = "agent1"  # Pessoa que vai modificar
+# password = "12"  # Senha do Banco de Dados
+# port = "5432"
 
 class Modulo3:
+    def __init__(self) -> None:
+        self.visited_rg = set()  # Conjunto para rastrear RGs visitados
 
-    def connect_to_db(self):
-        """Estabelece uma conexão com o banco de dados PostgreSQL."""
-        conn = None
-        try:
-            conn = psycopg2.connect(
-                host=host,
-                database=database,
-                user=user,
-                password=password,
-                port=port
-            )
-            conn.set_client_encoding('UTF8')
-            return conn
-        except Exception as error:
-            print(f"Erro ao conectar ao PostgreSQL: {error}")
-            return None
-
-    def create_graph_for_rg(self, rg, visited_rg, all_conexoes):
+    def create_graph(self):
         """Cria um grafo de conexões e crimes para um RG específico e armazena conexões para futuros grafos."""
-        conn = self.connect_to_db()
-        if conn is not None:
-            try:
-                cur = conn.cursor()
+        sql = "INSERT INTO grafos (id, etapa) VALUES (?,?)"
+        graph_id = generateRandomId()
+        db.connect()
+        db.insert(sql, (graph_id, 3))
+        db.close()
 
-                # Comando SQL para consultar o RG, suas conexões e crimes
-                query_rg = """
-                SELECT "RG", "Apelido" , "Conexoes", "Crimes" FROM historico WHERE "RG" = %s;
-                """
+        return graph_id
 
-                # Executar a consulta para o RG específico
-                cur.execute(query_rg, (rg,))
-                result = cur.fetchone()
+    def save_person(self, rg):
+        sql = "SELECT * FROM pessoas WHERE rg = ?"
+        db.connect()
+        person = db.execute(sql, (str(rg),))
+        db.close()
 
+        if len(person) > 0:
+            return (False, person[0][0])
+
+        sql = "SELECT rg, apelido FROM pessoas WHERE rg = ?"
+        db_policia.connect()
+        person = db_policia.execute(sql, (str(rg),))[0]
+        db_policia.close()
+
+        sql = "INSERT OR REPLACE INTO pessoas (rg, nome) VALUES (?,?)"
+        db.connect()
+        person_id = db.insert(sql, person)
+        db.close()
+
+        return (True, person_id)
+
+    def find_connections(self, start_rg, graph_id, limit=50):
+        """Função principal para iniciar a criação dos grafos e iteração das conexões."""
+        to_visit = [start_rg]  # Lista de RGs a serem visitados
+
+        i = 0
+        while to_visit and i < limit:
+            current_rg = to_visit.pop(0)
+
+            if current_rg not in self.visited_rg:
+                result, person_a_id = self.save_person(current_rg)
                 if result:
-                    rg, apelido, conexoes, crimes = result
+                    i += 1
 
-                    # Contagem de crimes e conexões
-                    num_crimes = len(crimes) if crimes else 0
-                    num_conexoes = len(conexoes) if conexoes else 0
-                    
-                    # Salvar crimes e conexões em vetores
-                    crime_vetor = crimes if crimes else []
-                    conexao_vetor = conexoes if conexoes else []
+                # Adicionar fatos no banco
+                sql = "SELECT id_fato FROM pessoa_fato WHERE rg_pessoa = ?"
+                db_policia.connect()
+                result = db_policia.execute(sql, (current_rg,))
+                db_policia.close()
 
-                    # Imprimir as informações do RG principal
-                    print(f"RG Principal: {rg}")
-                    print(f"Crimes ({num_crimes}): {crimes}")
-                    print(f"Conexões ({num_conexoes}): {conexoes}")
-                    print("-" * 50)
-
-                    id_grafo = generateRandomId()
-
+                for fact_id in result:
+                    sql = "INSERT INTO pessoa_fato (id_pessoa,id_fato) VALUES (?,?)"
                     db.connect()
-                    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
-                    db.execute(sql, (id_grafo, 2))
-        
-                    # salva a pessoa no banco de dados da pessoa
-                    sql = """INSERT INTO pessoas (id, nome, nivel_participacao, importancia) VALUES (?,?,?,?)"""
-                    array_of_tuples = (rg, apelido,1,0)
-                    db.execute(sql, array_of_tuples)
-                    
-                    # salva os fatos no banco de dados das pessoa_fato
-                    for i in range(num_crimes):
-                        print(crime_vetor[i])
-                        sql = """INSERT INTO pessoa_fato (id_pessoa, id_fato) VALUES (?,?)"""
-                        array_of_tuples = (rg, crime_vetor[i])
-                        db.execute(sql, array_of_tuples)
-                    
-                    # salva as conexões no banco de dados das conexões
-                    for i in range(num_conexoes):
-                        print(conexao_vetor[i])
-                        sql = """INSERT INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"""
-                        array_of_tuples = (rg, conexao_vetor[i],1,2)
-                        db.execute(sql, array_of_tuples)
+                    db.insert(sql, (person_a_id,fact_id[0]))
                     db.close()
 
-                    # Criar um grafo direcionado para o RG
-                    G = nx.DiGraph()
+                self.visited_rg.add(str(current_rg))
 
-                    # Adicionar o nó principal (RG) com os crimes como parte do rótulo
-                    crime_labels = ', '.join(crimes) if crimes else 'Nenhum crime'
-                    rg_label = f'{rg}\nCrimes: {crime_labels}'
-                    G.add_node(rg, label=rg_label)
+                sql = "SELECT * FROM conexoes WHERE rg_pessoa_a = ?"
+                db_policia.connect()
+                connections = db_policia.execute(sql, (current_rg,))
+                db_policia.close()
 
-                    # Adicionar as conexões e seus crimes como nós e arestas
-                    if conexoes:
-                        for conexao in conexoes:
-                            if conexao not in visited_rg:
-                                all_conexoes.add(conexao)
-
-                            # Comando SQL para buscar crimes e conexões da conexão
-                            query_conexao = """
-                            SELECT "Crimes", "Conexoes" FROM historico WHERE "RG" = %s;
-                            """
-
-                            cur.execute(query_conexao, (conexao,))
-                            result_conexao = cur.fetchone()
-
-                            if result_conexao:
-                                conexao_crimes, conexao_conexoes = result_conexao
-                                conexao_crimes_label = ', '.join(
-                                    conexao_crimes) if conexao_crimes else 'Nenhum crime'
-
-                                # Adicionar nó para cada conexão com rótulo
-                                G.add_node(
-                                    conexao, label=f'{conexao}\nCrimes: {conexao_crimes_label}')
-                                # Adicionar aresta do RG para a conexão
-                                G.add_edge(rg, conexao)
-
-                                # Adicionar conexões para futuros grafos
-                                for sub_conexao in conexao_conexoes:
-                                    if sub_conexao not in visited_rg:
-                                        all_conexoes.add(sub_conexao)
-
-                    # Ajuste do layout para o grafo
-                    pos = nx.spring_layout(G, seed=42)
-                    plt.figure(figsize=(12, 10))
-
-                    # Desenhar o grafo
-                    nx.draw(
-                        G,
-                        pos,
-                        with_labels=True,
-                        labels=nx.get_node_attributes(G, 'label'),
-                        node_size=3000,
-                        node_color='lightblue',
-                        font_size=10,
-                        font_weight='bold',
-                        arrows=True,  # Usar setas
-                        edge_color='black',
-                        width=2
-                    )
-                    plt.title(f'Grafo de Conexões e Crimes para RG {rg}')
-                    plt.show()
-
-                    # Atualizar a lista de RGs a serem visitados
-                    visited_rg.add(rg)
-                    # Retornar uma lista das conexões encontradas
-                    return list(all_conexoes)
-                else:
-                    print(f"RG {rg} não encontrado na tabela historico.")
-                    return []
-
-                # Fechar o cursor
-                cur.close()
-            except Exception as error:
-                print(f"Erro ao consultar dados ou criar o grafo: {error}")
-                return []
-            finally:
-                conn.close()
-                print("Conexão com o PostgreSQL fechada.")
-
-    def find_connections(self, rg):
-        """Função principal para iniciar a criação dos grafos e iteração das conexões."""
-        start_rg = rg  # Substituir pelo RG desejado
-        visited_rg = set()  # Conjunto para rastrear RGs visitados
-        to_visit = [start_rg]  # Lista de RGs a serem visitados
-        all_conexoes = set()  # Conjunto para rastrear todas as conexões
-
-        while to_visit:
-            current_rg = to_visit.pop(0)
-            if current_rg not in visited_rg:
-                new_conexoes = self.create_graph_for_rg(
-                    current_rg, visited_rg, all_conexoes)
-                
-                if not new_conexoes:
+                if connections == None:
                     continue
 
-                # Atualizar a lista de RGs a serem visitados com novas conexões
-                to_visit.extend(
-                    conexao for conexao in new_conexoes if conexao not in visited_rg)
+                rgs = list(map(lambda conn: conn[2], connections))
 
-        print("Todos os grafos foram desenhados.")
+                # Novas conexões que serão analisadas
+                newRgs = []
+                for rg in rgs:
+                    if rg not in self.visited_rg and rg not in to_visit:
+                        newRgs.append(str(rg))
+                
+                # Cadastrar conexões
+                sql = "INSERT OR REPLACE INTO conexoes (id_pessoa_A,id_pessoa_B,peso,id_grafo) VALUES (?,?,?,?)"
+                for newRg in newRgs:
+                    if i >= limit:
+                        break
+                    result, person_b_id = self.save_person(newRg)
+                    if result:
+                        i += 1  
+
+                    db.connect()
+                    db.insert(sql, (person_a_id, person_b_id, 1, graph_id))
+                    db.close()
+
+                to_visit.extend(newRgs)
 
     def main(self, persons):
+        self.visited_rg = set() 
+        graph_id = self.create_graph()
+
         for person in persons:
-            self.find_connections(person[1])
-
-
+            self.find_connections(person, graph_id)
         
-
-
 # Teste da classe Modulo3
 if __name__ == "__main__":
     m3 = Modulo3()
-    m3.main()
+    m3.main(["1", "2"])

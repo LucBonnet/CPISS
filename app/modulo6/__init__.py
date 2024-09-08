@@ -55,14 +55,15 @@ class Modulo6:
     values = list(degrees.values())
 
     self.omega = self.__calcOmega(values)
+    print(f"w = {self.omega}")
     
   def __updateNP(self, ups_ids, ups_np, max_np):
-    sql = "INSERT INTO pessoa_fato (id_pessoa, valor) VALUES (?,?)"
+    sql = "INSERT INTO pessoa_fato (id_pessoa, id_fato, valor) VALUES (?,?,?)"
     
     db.connect()
     for i, up_id in enumerate(ups_ids):
       new_fact = self.__calcNP(ups_np[i], max_np)
-      db.insert(sql, (up_id, new_fact))
+      db.insert(sql, (up_id, 0, new_fact))
     db.close()
 
   def __setNP(self):
@@ -97,41 +98,17 @@ class Modulo6:
 
     self.__updateNP(ups_ids, ups_np, max_np)
 
-  def __setWeightFact(self):
-    sql = "SELECT max(id) FROM conexoes"
-    db.connect()
-    result = db.execute(sql)
-    db.close()
-    max_id = result[0][0]
-
-    if max_id == None:
-      return
-    
-    batch_size = 100
-    for i in range(0, max_id, batch_size):
-      sql = "SELECT * FROM conexoes WHERE id >= ? AND id < ?"
-      db.connect()
-      result = db.execute(sql, (i, i + batch_size))
-      db.close()
-
-      for conn in result:
-        sql = "INSERT INTO pessoa_fato (id_pessoa, valor) VALUES (?,?)"
-        db.connect()
-        db.insert(sql, (conn[1], conn[3]))
-        db.insert(sql, (conn[2], conn[3]))
-        db.close()
-
   def __p(self, facts):
     mult = 1
     for f in facts:
-      mult *= 1 - (f * self.omega)
+      if not f == None:
+        mult *= 1 - (f * self.omega)
     return 1 - mult
 
   def main(self):
     print("Módulo 6")
     self.__setOmega()
     self.__setNP()
-    self.__setWeightFact()
 
     sql = "SELECT id FROM pessoas ORDER BY id"
     db.connect()
@@ -145,7 +122,7 @@ class Modulo6:
       result = db.execute(sql, (up_id,))
       db.close()
 
-      facts = [fact[2] for fact in result]
+      facts = [fact[3] for fact in result]
       importance = self.__p(facts)
 
       sql = "UPDATE pessoas SET importancia = ? WHERE id = ?"

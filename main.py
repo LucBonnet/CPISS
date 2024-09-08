@@ -1,4 +1,4 @@
-from app.modulo1 import Modulo1
+# from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
 from app.modulo4 import Modulo4
@@ -14,12 +14,14 @@ def main():
 
     m2 = Modulo2()
     ids, persons = m2.main()
-    
-    m1 = Modulo1()
-    m1.main(ids)
 
-    # m3 = Modulo3()
-    # m3.main(persons)
+    # m1 = Modulo1()
+    # m1.main(ids)
+
+    rgs = list(map(lambda person: person[1], persons))
+    
+    m3 = Modulo3()
+    m3.main(rgs)
 
     m4 = Modulo4()
     m4.main()

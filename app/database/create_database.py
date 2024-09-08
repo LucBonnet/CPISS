@@ -33,7 +33,8 @@ def create():
         CREATE TABLE IF NOT EXISTS pessoa_fato (
             id integer primary key AUTOINCREMENT,
             id_pessoa integer,
-            valor float,
+            id_fato integer,
+            valor float default 0,
             FOREIGN KEY (id_pessoa) REFERENCES pessoas(id) ON DELETE CASCADE
         );
     """

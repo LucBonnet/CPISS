@@ -1,7 +1,7 @@
 from app.database.database import db
 from app.utils.randomId import generateRandomId
 
-pessoas = [('Nome1', '123456'), ('Nome2', '654321'), ('Nome3', '1'), ('Nome4', '1234')]
+pessoas = [('Nome1', '1'), ('Nome2', '7'), ('Nome3', '8'), ('Nome4', '9')]
 
 class Modulo2():
     def main(self):
@@ -11,7 +11,7 @@ class Modulo2():
         graph_id = generateRandomId()
         db.insert(sql, (graph_id, 2))
 
-        id_pessoas = []
+        id_pessoas = [1, 2, 3, 4]
         for pessoa, rg in pessoas:
             sql = """INSERT INTO pessoas (nome, rg) VALUES (?, ?);"""
             id_atual = db.insert(sql, (pessoa, rg))
@@ -19,7 +19,7 @@ class Modulo2():
 
         sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"
         
-        db.insert(sql, (id_pessoas[1], id_pessoas[0], 0.9, graph_id))
+        db.insert(sql, (id_pessoas[1], id_pessoas[0], 1, graph_id))
 
         db.close()
 
