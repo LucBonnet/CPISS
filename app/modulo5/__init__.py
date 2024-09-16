@@ -4,6 +4,15 @@ from app.database.database import db
 
 class Modulo5:
   def __init__(self):
+    sql = "SELECT * FROM grafos WHERE etapa = 5"
+    db.connect()
+    result = db.execute(sql)
+    db.close()
+
+    if len(result) > 0:
+      self.graph_id = result[0][0]
+      return
+
     self.graph_id = generateRandomId()
     db.connect()
     sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
@@ -23,37 +32,25 @@ class Modulo5:
   def main(self):
     print("Módulo 5")
 
-    sql = "SELECT max(id) FROM conexoes"
+    sql = "SELECT c.* FROM grafos as g INNER JOIN conexoes as c on g.id = c.id_grafo WHERE g.etapa <> 5"
     db.connect()
-    result = db.execute(sql)
+    result_conns = db.execute(sql)
     db.close()
-    max_id = result[0][0]
-
-    if max_id == None:
-      return []
 
     graphs = set()
     connections = {}
-    batch_size = 100
-    for i in range(0, max_id, batch_size):
-      sql = "SELECT * FROM conexoes WHERE id >= ? AND id < ?"
-      db.connect()
-      result = db.execute(sql, (i, i + batch_size))
-      db.close()
-      for conn in result:
-        graphs.add(conn[4]) 
-        key = (conn[1], conn[2])
-        r_key = tuple(reversed(key))
-        
-        weight = conn[3]
-        if connections.get(key) != None:
-          self.updateParticipationLevel(key)
-          connections[key] = self.combineEdgesWeights(connections[key], weight)
-        elif connections.get(r_key) != None:
-          self.updateParticipationLevel(r_key)
-          connections[r_key] = self.combineEdgesWeights(connections[r_key], weight)
-        else:
-          connections[key] = weight
+    for conn_id, id_p_a, id_p_b, weight, graph_id in result_conns:
+      graphs.add(graph_id) 
+      key = (id_p_a, id_p_b)
+      r_key = tuple(reversed(key))
+      if connections.get(key) != None:
+        self.updateParticipationLevel(key)
+        connections[key] = self.combineEdgesWeights(connections[key], weight)
+      elif connections.get(r_key) != None:
+        self.updateParticipationLevel(r_key)
+        connections[r_key] = self.combineEdgesWeights(connections[r_key], weight)
+      else:
+        connections[key] = weight
 
     for graph_id in graphs:
       sql = "DELETE FROM grafos WHERE id = ?"

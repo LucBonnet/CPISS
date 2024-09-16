@@ -10,7 +10,7 @@ from app.database.create_database import create as create_database
 from Imagens_usuarios.createDataset import sample
 
 def main():
-    create_database()
+    # create_database()
 
     m2 = Modulo2()
     ids, persons = m2.main()

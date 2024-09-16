@@ -103,7 +103,7 @@ class Modulo6:
     for f in facts:
       if not f == None:
         mult *= 1 - (f * self.omega)
-    return 1 - mult
+    return (1 - mult)
 
   def main(self):
     print("Módulo 6")
@@ -114,6 +114,8 @@ class Modulo6:
     db.connect()
     result = db.execute(sql)
     db.close()
+
+    print(result)
 
     for up_id, in result:
       sql = "SELECT * FROM pessoa_fato WHERE id_pessoa = ?"
@@ -130,7 +132,17 @@ class Modulo6:
         value = db.execute(sql, (fact_id,))[0][0]
         db.close()
         facts.append(value)
+      
+      sql = "SELECT * FROM pessoas WHERE id = ?"
 
+      db.connect()
+      result = db.execute(sql, (up_id,))
+      db.close()
+
+      if len(result) > 0:
+        person = UP(*result[0])
+        facts.append(person.formmated_pl)
+      
       importance = self.__p(facts)
 
       sql = "UPDATE pessoas SET importancia = ? WHERE id = ?"

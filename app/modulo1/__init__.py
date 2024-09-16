@@ -18,11 +18,7 @@ class Modulo1:
     self.num_of_categories = len(self.model.categories)
     print("Modelo carregado")
     
-    self.graph_id = generateRandomId()
-    db.connect()
-    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
-    db.insert(sql, (self.graph_id, 1))
-    db.close()
+    self.graph_id = None
   
   def getUserImages(self, user_id: str): 
     try: 
@@ -143,6 +139,12 @@ class Modulo1:
 
     if len(person_ids) <= 1:
       return [[]]
+    
+    self.graph_id = generateRandomId()
+    db.connect()
+    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
+    db.insert(sql, (self.graph_id, 1))
+    db.close()
 
     return self.comparePreferences()
       

@@ -12,18 +12,28 @@ class Modulo2:
         file = open(persons_file_path, "r")
         lines = file.readlines()
 
-        pessoas = []
+        pessoas_arquivo = []
         for line in lines:
           name, rg = line.split(",")
-          pessoas.append((name, rg))
+          pessoas_arquivo.append((name.strip(), rg.strip()))
 
-        db.connect()
         id_pessoas = []
-        for pessoa, rg in pessoas:
+        pessoas = []
+        for pessoa, rg in pessoas_arquivo:
             sql = """INSERT OR IGNORE INTO pessoas (nome, rg) VALUES (?, ?);"""
+            db.connect()
             id_atual = db.insert(sql, (pessoa, rg))
-            id_pessoas.append(id_atual)
-        db.close()
+            db.close()
+            if id_atual:
+              id_pessoas.append(id_atual)
+
+              sql = "SELECT * FROM pessoas WHERE id = ?"
+              db.connect()
+              p = db.execute(sql, (id_atual,))
+              db.close()
+
+              if len(p) >= 0:
+                pessoas.append(p[0])
 
         if len(id_pessoas) > 2:
           db.connect()

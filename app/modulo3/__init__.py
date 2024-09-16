@@ -112,6 +112,11 @@ class Modulo3:
                 to_visit.extend(newRgs)
 
     def main(self, persons):
+        print("Módulo 3")
+        print(persons)
+        if len(persons) <= 0:
+            return
+
         self.visited_rg = set() 
         graph_id = self.create_graph()
 
