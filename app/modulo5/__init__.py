@@ -37,22 +37,22 @@ class Modulo5:
     result_conns = db.execute(sql)
     db.close()
 
-    print(result_conns)
+    # print(result_conns)
 
     graphs = set()
     connections = {}
     for conn_id, id_p_a, id_p_b, description, weight, graph_id in result_conns:
       graphs.add(graph_id) 
-      key = (id_p_a, id_p_b)
+      key = (id_p_a, id_p_b, graph_id)
       r_key = tuple(reversed(key))
       if connections.get(key) != None:
-        self.updateParticipationLevel(key)
         connections[key] = self.combineEdgesWeights(connections[key], weight)
       elif connections.get(r_key) != None:
-        self.updateParticipationLevel(r_key)
         connections[r_key] = self.combineEdgesWeights(connections[r_key], weight)
       else:
         connections[key] = weight
+
+      self.updateParticipationLevel((id_p_a, id_p_b))
 
     for graph_id in graphs:
       sql = "DELETE FROM grafos WHERE id = ?"
@@ -65,7 +65,7 @@ class Modulo5:
       if new_weight == 0:
         continue
       
-      user_a_id, user_b_id = key
+      user_a_id, user_b_id, graph_id = key
 
       db.connect()
       sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"

@@ -19,3 +19,4 @@ funcionarios-matadouro;419976309;Os funcionários do matadouro avistam Carlos co
 456573409;171481094;Marilda é irmã de Neyde
 456573409;amanda-amiga-nilza;Neyde e Amanda são a mesma pessoa
 456573409;odete-buscou-escola;Neyde e Odete são a mesma pessoa
+456573409;138380624;Wiliam é o antigo namorado de Neyde
