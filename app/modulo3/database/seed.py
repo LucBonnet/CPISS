@@ -1,36 +1,20 @@
 from database import db_policia
 
 pessoas = [
-    ('1', 'João'),
-    ('2', 'Pedro'),
-    ('3', 'André'),
-    ('4', 'Jorge'),
-    ('5', 'Francisco'),
+    ('419976309', 'Carlos'),
 ]
 
 fatos = [
-    ('1', 'Fato do tipo 1', 'Descrição do fato do tipo 1'),
-    ('2', 'Fato do tipo 2', 'Descrição do fato do tipo 2'),
-    ('3', 'Fato do tipo 3', 'Descrição do fato do tipo 3'),
+    ('1', 'Homicídio', 'Homicídio'),
+    ('2', 'Roubo a mão armada', 'Roubo a mão armada'),
 ]
 
 pessoa_fato = [
-    ('1', '1'),
-    ('1', '2'),
-    ('2', '1'),
+    ('419976309', '1'),
+    ('419976309', '2'),
 ]
 
-conexoes = [
-    ('1', '2'),
-    ('1', '3'),
-    ('2', '1'),
-    ('3', '1'),
-    ('3', '4'), 
-    ('4', '1'), 
-    ('4', '3'), 
-    ('4', '5'), 
-    ('5', '4'), 
-]
+conexoes = []
 
 def clearData():
     db_policia.connect()
@@ -58,18 +42,20 @@ def main():
     db_policia.connect()
     
     sql = "INSERT INTO pessoas (rg,apelido) VALUES (?,?)"
-    db_policia.insert(sql, pessoas)
+    if len(pessoas) > 0:
+        db_policia.insert(sql, pessoas)
 
     sql = "INSERT INTO fatos (tipo,nome,descricao) VALUES (?,?,?)"
-    db_policia.insert(sql, fatos)
+    if len(fatos) > 0:
+        db_policia.insert(sql, fatos)
 
     sql = "INSERT INTO pessoa_fato (rg_pessoa,id_fato) VALUES (?,?)"
-    db_policia.insert(sql, pessoa_fato)
+    if len(pessoa_fato) > 0:
+        db_policia.insert(sql, pessoa_fato)
 
     sql = "INSERT INTO conexoes (rg_pessoa_a,rg_pessoa_b) VALUES (?,?,?)"
-    db_policia.insert(sql, conexoes)
-    
-
+    if len(conexoes) > 0:
+        db_policia.insert(sql, conexoes)
 
 if __name__ == "__main__":
     main()

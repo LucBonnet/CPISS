@@ -26,7 +26,18 @@ class Modulo7:
   def main(self):
     print("Módulo 7")
 
-    id_vitima = 5
+    id_vitima = 0
+    db.connect()
+    sql = "SELECT * FROM vitimas"
+    result_victims = db.execute(sql)
+    db.close()
+
+    if len(result_victims) == 0:
+      print("Vítima não encontrada")
+      return    
+    
+    victim = result_victims[0]
+    id_vitima = victim[0]
 
     # Primeira pessoa   (Mudar o numero depois do limit para mudar a quantidade de ids que quer na lista de maior importancia)
     sql = "SELECT id, importancia FROM pessoas ORDER BY importancia desc LIMIT 5"
@@ -140,7 +151,7 @@ class Modulo7:
         up = UP(*up)
         # print(up)
         self.graph.add_node(up_id)
-        labels[up_id] = f"{up_id}\n{(round(importance * 100)):.2f}%"
+        labels[up_id] = f"{name}\n{(round(importance * 100)):.2f}%"
 
     sql = "SELECT max(id) FROM conexoes"
     db.connect()
@@ -161,7 +172,7 @@ class Modulo7:
       for conn in result:
         up_a_id = conn[1]
         up_b_id = conn[2]
-        weight = conn[3]
+        weight = conn[4]
 
         self.graph.add_edge(up_a_id, up_b_id, weight=weight)
     

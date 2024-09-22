@@ -1,4 +1,4 @@
-from app.modulo1 import Modulo1
+# from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
 from app.modulo4 import Modulo4
@@ -10,13 +10,13 @@ from app.database.create_database import create as create_database
 from Imagens_usuarios.createDataset import sample
 
 def main():
-    # create_database()
+    create_database()
 
     m2 = Modulo2()
     ids, persons = m2.main()
 
-    m1 = Modulo1()
-    m1.main(ids)
+    # m1 = Modulo1()
+    # m1.main(ids)
 
     rgs = list(map(lambda person: person[1], persons))
     

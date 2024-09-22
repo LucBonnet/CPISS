@@ -5,6 +5,7 @@ from app.utils.randomId import generateRandomId
 
 persons_file_path = os.path.join(os.path.dirname(__file__), "pessoas.txt")
 connections_file_path = os.path.join(os.path.dirname(__file__), "conexoes.txt")
+victims_file_path = os.path.join(os.path.dirname(__file__), "vitimas.txt")
 
 class Modulo2:
     def main(self):
@@ -35,6 +36,7 @@ class Modulo2:
 
               if len(p) >= 0:
                 pessoas.append(p[0])
+        file.close()
 
         if len(id_pessoas) > 2:
           sql_insert_connection = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
@@ -42,7 +44,7 @@ class Modulo2:
 
           file_lines = connections_file.readlines()
           for file_line in file_lines:
-            code_person_a, code_person_b, description = file_line.split(";")
+            code_person_a, code_person_b, description = file_line.strip().split(";")
 
             sql_find_person = "SELECT id FROM pessoas WHERE identificador = ?"
             
@@ -75,5 +77,30 @@ class Modulo2:
             db.connect()
             db.insert(sql_insert_connection, (id_pessoa_a, id_pessoa_b, description, 1, graph_id))
             db.close()
+
+          connections_file.close()
+          
+          victims_file = open(victims_file_path, "r", encoding="utf-8")
+          file_lines = victims_file.readlines()
+          for file_line in file_lines:
+            code_person = file_line.strip()
+
+            sql_find_person = "SELECT id FROM pessoas WHERE identificador = ?"
+            
+            db.connect()
+            person = db.execute(sql_find_person, (code_person,))
+            db.close()
+            if len(person) == 0:
+              raise Exception(f"Erro ao adicionar vítima\nPessoa {code_person} não encontrada")
+            else:
+              person = person[0]
+
+            id_person = person[0]
+            sql = "INSERT INTO vitimas (id_pessoa) VALUES (?)"
+            db.connect()
+            db.insert(sql, (id_person,))
+            db.close()
+
+          victims_file.close()
 
         return id_pessoas, pessoas

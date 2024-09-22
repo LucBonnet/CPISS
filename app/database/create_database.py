@@ -20,7 +20,7 @@ def create():
     sql = """
         CREATE TABLE IF NOT EXISTS pessoas (
             id integer primary key AUTOINCREMENT,
-            rg varchar(255) unique,
+            identificador varchar(255) unique,
             nome varchar(255),
             nivel_participacao int default 1,
             np_formatado float default 0,
@@ -59,6 +59,7 @@ def create():
             id integer PRIMARY KEY AUTOINCREMENT,
             id_pessoa_A integer,
             id_pessoa_B integer,
+            descricao text,
             peso float default 1,
             id_grafo integer,
             FOREIGN KEY (id_pessoa_A) REFERENCES pessoas(id) ON DELETE CASCADE,
@@ -74,6 +75,15 @@ def create():
         CREATE TABLE IF NOT EXISTS preferencias (
             id_pessoa integer primary key,
             valores text,
+            FOREIGN KEY (id_pessoa) REFERENCES pessoas(id)
+        );
+    """
+
+    db.execute(sql)
+
+    sql = """
+        CREATE TABLE IF NOT EXISTS vitimas (
+            id_pessoa integer primary key,
             FOREIGN KEY (id_pessoa) REFERENCES pessoas(id)
         );
     """

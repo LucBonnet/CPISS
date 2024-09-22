@@ -37,9 +37,11 @@ class Modulo5:
     result_conns = db.execute(sql)
     db.close()
 
+    print(result_conns)
+
     graphs = set()
     connections = {}
-    for conn_id, id_p_a, id_p_b, weight, graph_id in result_conns:
+    for conn_id, id_p_a, id_p_b, description, weight, graph_id in result_conns:
       graphs.add(graph_id) 
       key = (id_p_a, id_p_b)
       r_key = tuple(reversed(key))
@@ -66,8 +68,8 @@ class Modulo5:
       user_a_id, user_b_id = key
 
       db.connect()
-      sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"
-      result = db.insert(sql, (user_a_id, user_b_id, new_weight, self.graph_id))
+      sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
+      result = db.insert(sql, (user_a_id, user_b_id, description, new_weight, self.graph_id))
       connections_ids.append(result)
       db.close()
 

@@ -26,10 +26,10 @@ class Modulo3:
 
         return graph_id
 
-    def save_person(self, rg):
-        sql = "SELECT * FROM pessoas WHERE rg = ?"
+    def save_person(self, identificador):
+        sql = "SELECT * FROM pessoas WHERE identificador = ?"
         db.connect()
-        person = db.execute(sql, (str(rg),))
+        person = db.execute(sql, (str(identificador),))
         db.close()
 
         if len(person) > 0:
@@ -37,7 +37,7 @@ class Modulo3:
 
         sql = "SELECT rg, apelido FROM pessoas WHERE rg = ?"
         db_policia.connect()
-        person = db_policia.execute(sql, (str(rg),))[0]
+        person = db_policia.execute(sql, (str(identificador),))[0]
         db_policia.close()
 
         sql = "INSERT OR REPLACE INTO pessoas (rg, nome) VALUES (?,?)"
@@ -47,9 +47,9 @@ class Modulo3:
 
         return (True, person_id)
 
-    def find_connections(self, start_rg, graph_id, limit=50):
+    def find_connections(self, start_identificador, graph_id, limit=50):
         """Função principal para iniciar a criação dos grafos e iteração das conexões."""
-        to_visit = [start_rg]  # Lista de RGs a serem visitados
+        to_visit = [start_identificador]  # Lista de RGs a serem visitados
 
         i = 0
         while to_visit and i < limit:
