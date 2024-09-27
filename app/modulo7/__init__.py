@@ -177,7 +177,7 @@ class Modulo7:
         self.graph.add_edge(up_a_id, up_b_id, weight=weight)
     
     plt.figure(figsize=(6, 6))
-    pos = nx.spring_layout(self.graph, k=3)  
+    pos = nx.spring_layout(self.graph)  
     edge_color = [self.func_edge_color(u, v, path) for u,v in self.graph.edges]
     nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color=edge_color, font_color="#FFFFFF", node_size=2000, width=0.5)
     edge_labels = dict([((u,v,), f"{d['weight']:.2f}") for u,v,d in self.graph.edges(data=True)])

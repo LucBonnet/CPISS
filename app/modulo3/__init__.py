@@ -3,17 +3,12 @@ import matplotlib.pyplot as plt
 
 from app.database.database import db
 from app.modulo3.database.database import db_policia
+from app.modulo3.database.populateByFile import populateByFile
 from app.utils.randomId import generateRandomId
 
-# Credenciais de conexão
-# host = "localhost"
-# database = "TCC3"  # Banco de dados
-# user = "agent1"  # Pessoa que vai modificar
-# password = "12"  # Senha do Banco de Dados
-# port = "5432"
-
 class Modulo3:
-    def __init__(self) -> None:
+    def __init__(self, file) -> None:
+        populateByFile(file)
         self.visited_rg = set()  # Conjunto para rastrear RGs visitados
 
     def create_graph(self):
@@ -113,7 +108,6 @@ class Modulo3:
 
     def main(self, persons):
         print("Módulo 3")
-        print(persons)
         if len(persons) <= 0:
             return
 

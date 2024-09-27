@@ -1,0 +1,31 @@
+{
+  "pessoas": [
+    {
+      "documento": "419976309",
+      "nome": "Carlos"
+    }
+  ],
+  "fatos": [
+    {
+      "tipo": "1",
+      "nome": "Homicídio",
+      "descricao": "Homicídio"
+    },
+    {
+      "tipo": "2",
+      "nome": "Roubo a mão armada",
+      "descricao": "Roubo a mão armada"
+    }
+  ],
+  "conexoes": [],
+  "pessoa_fato": [
+    {
+      "documento_pessoa": "419976309",
+      "tipo_fato": "1"
+    },
+    {
+      "documento_pessoa": "419976309",
+      "tipo_fato": "2"
+    }
+  ]
+}

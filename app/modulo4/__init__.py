@@ -1,22 +1,23 @@
 import os
 
-from app.database.database import db
+from app.models.Fact import Fact
 
 facts_file_path = os.path.join(os.path.dirname(__file__), "fatos.txt")
 
 class Modulo4:
-
-  def main(self):
+  def getDataFromFile(self, file_path):
     facts = []
-    file = open(facts_file_path, "r")
-    for line in file.readlines():
-      fact = line.split(",")
-      facts.append(fact)
-    file.close()
+    if file_path:
+      with open(file_path, 'r') as facts_file:
+        for fact in facts_file.readlines():
+          fact_type, value = fact.split(";")
+          facts.append((fact_type.strip(), float(value.strip())))
+    
+    return facts
 
-    for fact in facts:
-      fact_id, fact_value = fact
-      db.connect()
-      sql = "UPDATE fatos SET valor = ? WHERE id = ?"
-      db.execute(sql, (fact_value,fact_id))
-      db.close()
+  def main(self, facts_file_path):
+    print("Módulo 4")
+
+    facts = self.getDataFromFile(facts_file_path)
+    
+    Fact.update(facts)

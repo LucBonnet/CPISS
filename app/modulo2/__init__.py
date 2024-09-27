@@ -2,105 +2,70 @@ import os
 
 from app.database.database import db
 from app.utils.randomId import generateRandomId
+from app.models.UP import UP
+from app.models.Graph import Graph
+from app.models.Connection import Connection
+from app.models.Victim import Victim
 
 persons_file_path = os.path.join(os.path.dirname(__file__), "pessoas.txt")
 connections_file_path = os.path.join(os.path.dirname(__file__), "conexoes.txt")
 victims_file_path = os.path.join(os.path.dirname(__file__), "vitimas.txt")
 
 class Modulo2:
-    def main(self):
-        print("Módulo 2")
+    def getDataFromFiles(self, files):
+      persons_file_path = files["pessoas"]
+      connections_file_path = files["conexoes"]
+      victims_file_path = files["vitimas"]
 
-        file = open(persons_file_path, "r")
-        lines = file.readlines()
+      persons = []
+      if persons_file_path:
+        with open(persons_file_path, 'r') as persons_file:
+          for person in persons_file.readlines():
+            name, identifier = person.split(";")
+            persons.append((name.strip(), identifier.strip()))
 
-        pessoas_arquivo = []
-        for line in lines:
-          name, rg = line.split(",")
-          pessoas_arquivo.append((name.strip(), rg.strip()))
+      connections = []
+      if connections_file_path: 
+        with open(connections_file_path, 'r') as connections_file:
+          for conn in connections_file.readlines():
+            id_p_a, id_p_b, description = conn.split(";")
+            connections.append((id_p_a.strip(), id_p_b.strip(), description.strip()))
 
-        id_pessoas = []
-        pessoas = []
-        for pessoa, rg in pessoas_arquivo:
-            sql = """INSERT OR IGNORE INTO pessoas (nome, identificador) VALUES (?, ?);"""
-            db.connect()
-            id_atual = db.insert(sql, (pessoa, rg))
-            db.close()
-            if id_atual:
-              id_pessoas.append(id_atual)
+      victims = []
+      if victims_file_path: 
+        with open(victims_file_path, 'r') as victims_file:
+          for victim in victims_file.readlines():
+            victims.append(victim.strip())
 
-              sql = "SELECT * FROM pessoas WHERE id = ?"
-              db.connect()
-              p = db.execute(sql, (id_atual,))
-              db.close()
+      return persons, connections, victims
 
-              if len(p) >= 0:
-                pessoas.append(p[0])
-        file.close()
+    def main(self, modulo2InitialData):
+      print("Módulo 2")
+      pessoas_arquivo, conexoes_arquivo, vitimas_arquivo = self.getDataFromFiles(modulo2InitialData)
 
-        if len(id_pessoas) > 2:
-          sql_insert_connection = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
-          connections_file = open(connections_file_path, "r", encoding="utf-8")
+      pessoas = UP.create(pessoas_arquivo)
+      print("Pessoas cadastradas:\n", pessoas)
 
-          file_lines = connections_file.readlines()
-          for file_line in file_lines:
-            code_person_a, code_person_b, description = file_line.strip().split(";")
+      if len(pessoas) == 0:
+        return 
 
-            sql_find_person = "SELECT id FROM pessoas WHERE identificador = ?"
-            
-            db.connect()
-            person_a = db.execute(sql_find_person, (code_person_a,))
-            db.close()
-            if len(person_a) == 0:
-              raise Exception(f"Erro ao criar conexão\nPessoa {code_person_a} não encontrada")
-            else:
-              person_a = person_a[0]
+      for conn in conexoes_arquivo:
+        code_person_a, code_person_b, description = conn
 
-            id_pessoa_a = person_a[0]
+        person_a = UP.findByCode(code_person_a)
+        if not person_a:
+          raise Exception(f"Erro ao criar conexão\nPessoa {code_person_a} não encontrada")
+        
+        person_b = UP.findByCode(code_person_b)
+        if not person_b:
+          raise Exception(f"Erro ao criar conexão\nPessoa {code_person_b} não encontrada")
 
-            db.connect()
-            person_b = db.execute(sql_find_person, (code_person_b,))
-            db.close()
-            if len(person_b) == 0:
-              raise Exception(f"Erro ao criar conexão\nPessoa {code_person_b} não encontrada")
-            else:
-              person_b = person_b[0]
+        graph_id = Graph.create(2)
 
-            db.connect()
-            sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
-            graph_id = generateRandomId()
-            db.insert(sql, (graph_id, 2))
-            db.close()
+        Connection.create((person_a.up_id, person_b.up_id, description, 1, graph_id))
+        
+      for victim in vitimas_arquivo:
+        up_victim = UP.findByCode(victim)
+        Victim.create(up_victim.up_id)
 
-            id_pessoa_b = person_b[0]
-
-            db.connect()
-            db.insert(sql_insert_connection, (id_pessoa_a, id_pessoa_b, description, 1, graph_id))
-            db.close()
-
-          connections_file.close()
-          
-          victims_file = open(victims_file_path, "r", encoding="utf-8")
-          file_lines = victims_file.readlines()
-          for file_line in file_lines:
-            code_person = file_line.strip()
-
-            sql_find_person = "SELECT id FROM pessoas WHERE identificador = ?"
-            
-            db.connect()
-            person = db.execute(sql_find_person, (code_person,))
-            db.close()
-            if len(person) == 0:
-              raise Exception(f"Erro ao adicionar vítima\nPessoa {code_person} não encontrada")
-            else:
-              person = person[0]
-
-            id_person = person[0]
-            sql = "INSERT INTO vitimas (id_pessoa) VALUES (?)"
-            db.connect()
-            db.insert(sql, (id_person,))
-            db.close()
-
-          victims_file.close()
-
-        return id_pessoas, pessoas
+      return pessoas

@@ -2,7 +2,10 @@ import os
 
 from app.database.database import db
 
-def create():
+def create(reset=False):
+    if not reset:
+        return
+
     path = os.path.dirname(os.path.realpath(__file__))
     if "database.db" in os.listdir(path):
         os.remove(os.path.join(path, 'database.db'))
