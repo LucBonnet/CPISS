@@ -1,9 +1,13 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+
 import queue
+
+from app.utils.formatImportance import formatImportance
 
 from app.database.database import db
 from app.models.UP import UP
+from app.models.Connection import Connection
 from app.models.Victim import Victim
 
 class Modulo7:
@@ -23,33 +27,8 @@ class Modulo7:
       return "#FF0000";
   
     return "#3F5BD2"
-
-  def main(self):
-    print("Módulo 7")
-
-    id_vitima = 0
-    victims = Victim.getAll()
-
-    if len(victims) == 0:
-      print("Vítima não encontrada")
-      return    
-    
-    victim = victims[0]
-    id_vitima = victim.person_id
-
-    # Primeira pessoa   (Mudar o numero depois do limit para mudar a quantidade de ids que quer na lista de maior importancia)
-    sql = "SELECT id, importancia FROM pessoas ORDER BY importancia desc LIMIT 5"
-    db.connect()
-    result = db.execute(sql)
-    db.close()
-
-    if len(result) == 0:
-        return
-    # escolher qual id vc quer na lista
-    pessoa_maior_importancia = result[0]
-
-    id_pessoa, importancia = pessoa_maior_importancia
-
+  
+  def calculaCaminho(self, id_vitima, id_pessoa, importancia):
     pq = queue.PriorityQueue()
 
     # Coloca a primeira pessoa na fila de prioridade
@@ -125,53 +104,53 @@ class Modulo7:
                 # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
                 pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, caminho_atualizado)))
 
-    sql = "SELECT max(id) FROM pessoas"
-    db.connect()
-    result = db.execute(sql)
-    db.close()
-    max_id = result[0][0]
+    return path
+     
+  def main(self):
+    print("Módulo 7")
 
-    if max_id == None:
+    id_vitima = 0
+    victims = Victim.getAll()
+
+    if len(victims) == 0:
+      print("Vítima não encontrada")
+      return    
+    
+    victim = victims[0]
+    id_vitima = victim.person_id
+
+    up_victim = UP.findById(id_vitima)
+    
+    print("\nVítima:")
+    print(up_victim)
+
+    # Primeira pessoa   (Mudar o numero do limit para mudar a quantidade de ids que quer na lista de maior importancia)
+    ups = UP.getOrderByImportance()
+
+    if len(ups) == 0:
       return
     
+    print("\nRanqueamento das unidades participantes:")
+    for i, up in enumerate(ups):
+      print(f"{(i+1)}. {up.name} - {formatImportance(up.importance)}%")
+    
+    # escolher qual id vc quer na lista
+    pessoa_maior_importancia = ups[0]
+
+    path = self.calculaCaminho(id_vitima, pessoa_maior_importancia.up_id, pessoa_maior_importancia.importance)
+
+    persons = UP.getAll()
+
     labels = {}
-    batch_size = 100
-    for i in range(0, max_id, batch_size):
-      sql = "SELECT * FROM pessoas WHERE id >= ? AND id < ?"
-      db.connect()
-      result = db.execute(sql, (i, i + batch_size))
-      db.close()
-    
-      for up in result:
-        up_id, rg, name, np, f_np, importance = up
-        up = UP(*up)
-        # print(up)
-        self.graph.add_node(up_id)
-        labels[up_id] = f"{name}\n{(round(importance * 100)):.2f}%"
+    for person in persons:
+      self.graph.add_node(person.up_id)
+      labels[person.up_id] = f"{person.name}\n{formatImportance(person.importance)}%"
 
-    sql = "SELECT max(id) FROM conexoes"
-    db.connect()
-    result = db.execute(sql)
-    db.close()
-    max_id = result[0][0]
+    connections = Connection.getAll()
 
-    if max_id == None:
-      return
-    
-    batch_size = 100
-    for i in range(0, max_id, batch_size):
-      sql = "SELECT * FROM conexoes WHERE id >= ? AND id < ?"
-      db.connect()
-      result = db.execute(sql, (i, i + batch_size))
-      db.close()
+    for connection in connections:
+      self.graph.add_edge(connection.id_person_a, connection.id_person_b, weight=connection.weight)
 
-      for conn in result:
-        up_a_id = conn[1]
-        up_b_id = conn[2]
-        weight = conn[4]
-
-        self.graph.add_edge(up_a_id, up_b_id, weight=weight)
-    
     plt.figure(figsize=(6, 6))
     pos = nx.spring_layout(self.graph)  
     edge_color = [self.func_edge_color(u, v, path) for u,v in self.graph.edges]

@@ -28,13 +28,7 @@ class UP:
     return self.__str__()
 
   def __str__(self) -> str:
-    return f"""
-    Id: {self.up_id}
-    Nome: {self.name}
-    RG: {self.document}
-    Nível de participação: {self.participation_level}
-    Nível de participação [0,1]: {self.formmated_pl}
-    Importância: {self.importance:.10f}"""
+    return f"Id: {self.up_id}\nNome: {self.name}\nRG: {self.document}\nNível de participação: {self.participation_level}\nNível de participação [0,1]: {self.formmated_pl}\nImportância: {self.importance:.10f}"
   
   @staticmethod
   def create(personData):
@@ -87,3 +81,66 @@ class UP:
       return None
 
     return UP(*result[0])
+  
+  @staticmethod
+  def getOrderByImportance(limit=None):
+    sql = "SELECT * FROM pessoas ORDER BY importancia DESC"
+    
+    db.connect()
+
+    if limit != None:
+      sql += " LIMIT ?"
+      result = db.execute(sql, (limit,))
+    else:
+      result = db.execute(sql)
+
+    db.close()
+
+    ups: list[UP] = []
+    if len(result) == 0:
+      return ups
+    
+    for up in result:
+      ups.append(UP(*up))
+
+    return ups
+    
+  def findById(up_id: str):
+    sql = "SELECT * FROM pessoas WHERE id = ?"
+    
+    db.connect()
+    result = db.execute(sql, (up_id,))
+    db.close()
+
+    if len(result) == 0:
+      return None
+
+    return UP(*result[0])
+
+  def getAll():
+    persons: list[UP] = []
+
+    sql = "SELECT max(id) FROM pessoas"
+
+    db.connect()
+    result = db.execute(sql)
+    db.close()
+    max_id = result[0][0]
+
+    if max_id == None:
+      return persons
+    
+    batch_size = 100
+    for i in range(0, max_id, batch_size):
+      sql = "SELECT * FROM pessoas WHERE id >= ? AND id < ?"
+      db.connect()
+      result = db.execute(sql, (i, i + batch_size))
+      db.close()
+
+      if len(result) == 0:
+        continue
+
+      for up in result:
+        persons.append(UP(*up))
+    
+    return persons

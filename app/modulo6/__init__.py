@@ -115,9 +115,7 @@ class Modulo6:
     db.connect()
     result = db.execute(sql)
     db.close()
-
-    print(result)
-
+    
     for up_id, in result:
       sql = "SELECT * FROM pessoa_fato WHERE id_pessoa = ?"
 

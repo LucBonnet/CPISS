@@ -50,8 +50,6 @@ class Graph:
       return graphs
     
     for graph in result:
-      print(graph)
-
       graphData = {
         "id_grafo": graph[0],
         "etapa": graph[1],

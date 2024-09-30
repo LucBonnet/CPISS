@@ -61,7 +61,6 @@ class Modulo5:
 
       db.connect()
       sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
-      print(user_a_id, user_b_id, self.graph_id)
       result = db.insert(sql, (user_a_id, user_b_id, description, new_weight, self.graph_id))
       connections_ids.append(result)
       db.close()
