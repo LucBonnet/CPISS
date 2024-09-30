@@ -1,0 +1,7 @@
+amanda-amiga-nilza;399606373;Amanda estudou com Nilza
+amanda-amiga-nilza;253138942;Amanda tinha interesse amoroso em Nelson
+119721661;dona-escola;Tânia estuda na escola
+399606373;dona-escola;Nilza ligou para a escola e disse que não poderia buscar Tânia
+399606373;odete-buscou-escola;Odete é vizinha de Nilza
+odete-buscou-escola;dona-escola;Odete vai até a escola de Tânia
+odete-buscou-escola;119721661;Odete buscou a Tânia na escola

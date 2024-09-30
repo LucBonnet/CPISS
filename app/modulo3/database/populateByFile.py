@@ -52,7 +52,7 @@ def populateByFile(file_path: str | None):
 
   conexoes = []
   for conn in data["conexoes"]:
-    conn = (conn["doc_pessoa_a"], conn["doc_pessoa_b"])
+    conn = (conn["doc_pessoa_a"], conn["doc_pessoa_b"], conn["descricao"], conn["peso"])
     conexoes.append(conn)
 
   db_policia.connect()
@@ -69,7 +69,7 @@ def populateByFile(file_path: str | None):
   if len(pessoa_fato) > 0:
       db_policia.insert(sql, pessoa_fato)
 
-  sql = "INSERT INTO conexoes (rg_pessoa_a,rg_pessoa_b) VALUES (?,?,?)"
+  sql = "INSERT INTO conexoes (rg_pessoa_a,rg_pessoa_b,descricao,peso) VALUES (?,?,?,?)"
   if len(conexoes) > 0:
       db_policia.insert(sql, conexoes)
       

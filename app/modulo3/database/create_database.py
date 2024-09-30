@@ -49,6 +49,8 @@ def create():
             id integer primary key AUTOINCREMENT,
             rg_pessoa_a integer,
             rg_pessoa_b integer,
+            descricao text,
+            peso float default 1,
             FOREIGN KEY (rg_pessoa_a) REFERENCES pessoas(rg) ON DELETE CASCADE
             FOREIGN KEY (rg_pessoa_b) REFERENCES pessoas(rg) ON DELETE CASCADE
         );

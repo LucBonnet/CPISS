@@ -1,25 +1,16 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-
 from app.database.database import db
 from app.modulo3.database.database import db_policia
 from app.modulo3.database.populateByFile import populateByFile
-from app.utils.randomId import generateRandomId
+
+from app.models.Graph import Graph
+from app.models.Connection import Connection
+from app.models.UP import UP
+
 
 class Modulo3:
     def __init__(self, file) -> None:
         populateByFile(file)
         self.visited_rg = set()  # Conjunto para rastrear RGs visitados
-
-    def create_graph(self):
-        """Cria um grafo de conexões e crimes para um RG específico e armazena conexões para futuros grafos."""
-        sql = "INSERT INTO grafos (id, etapa) VALUES (?,?)"
-        graph_id = generateRandomId()
-        db.connect()
-        db.insert(sql, (graph_id, 3))
-        db.close()
-
-        return graph_id
 
     def save_person(self, identificador):
         sql = "SELECT * FROM pessoas WHERE identificador = ?"
@@ -35,14 +26,14 @@ class Modulo3:
         person = db_policia.execute(sql, (str(identificador),))[0]
         db_policia.close()
 
-        sql = "INSERT OR REPLACE INTO pessoas (rg, nome) VALUES (?,?)"
+        sql = "INSERT OR REPLACE INTO pessoas (identificador, nome) VALUES (?,?)"
         db.connect()
         person_id = db.insert(sql, person)
         db.close()
 
         return (True, person_id)
 
-    def find_connections(self, start_identificador, graph_id, limit=50):
+    def find_connections(self, start_identificador, limit=50):
         """Função principal para iniciar a criação dos grafos e iteração das conexões."""
         to_visit = [start_identificador]  # Lista de RGs a serem visitados
 
@@ -75,35 +66,34 @@ class Modulo3:
 
                 self.visited_rg.add(str(current_rg))
 
-                sql = "SELECT * FROM conexoes WHERE rg_pessoa_a = ?"
+                sql = "SELECT * FROM conexoes AS c INNER JOIN pessoas AS p ON c.rg_pessoa_b = p.rg WHERE rg_pessoa_a = ?"
                 db_policia.connect()
-                connections = db_policia.execute(sql, (current_rg,))
+                connections_with_person_b = db_policia.execute(sql, (current_rg,))
                 db_policia.close()
 
-                if connections == None:
+                if len(connections_with_person_b) == 0:
                     continue
 
-                rgs = list(map(lambda conn: conn[2], connections))
+                rgs = list(map(lambda conn: conn[2], connections_with_person_b))
 
                 # Novas conexões que serão analisadas
-                newRgs = []
-                for rg in rgs:
-                    if rg not in self.visited_rg and rg not in to_visit:
-                        newRgs.append(str(rg))
+                connections_with_person_b = list(filter(lambda conn: conn[2] not in self.visited_rg and conn[2] not in to_visit, connections_with_person_b))
                 
                 # Cadastrar conexões
-                sql = "INSERT OR REPLACE INTO conexoes (id_pessoa_A,id_pessoa_B,peso,id_grafo) VALUES (?,?,?,?)"
-                for newRg in newRgs:
+                for conn in connections_with_person_b:
+
                     if i >= limit:
                         break
-                    result, person_b_id = self.save_person(newRg)
-                    if result:
-                        i += 1  
 
-                    db.connect()
-                    db.insert(sql, (person_a_id, person_b_id, 1, graph_id))
-                    db.close()
+                    person_b = UP.findByCode(conn[2])
+                    if person_b == None:
+                        person_b = UP.create((conn[6], conn[2]))[0]
+                        i += 1
 
+                    graph_id = Graph.create(3)
+                    Connection.create((person_a_id, person_b.up_id, conn[3], 1, graph_id))
+
+                newRgs = list(map(lambda conn: conn[2], connections_with_person_b))
                 to_visit.extend(newRgs)
 
     def main(self, persons):
@@ -112,10 +102,9 @@ class Modulo3:
             return
 
         self.visited_rg = set() 
-        graph_id = self.create_graph()
 
         for person in persons:
-            self.find_connections(person, graph_id)
+            self.find_connections(person)
         
 # Teste da classe Modulo3
 if __name__ == "__main__":

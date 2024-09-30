@@ -1,6 +1,9 @@
 from app.database.database import db
 
 class Victim():
+  def __init__(self, person_id):
+    self.person_id = person_id
+
   def create(victimData):
     sql = "INSERT INTO vitimas (id_pessoa) VALUES (?)"
     
@@ -23,4 +26,16 @@ class Victim():
     db.insert(sql, victims)
     db.close()
 
+    return victims
+  
+  def getAll():
+    db.connect()
+    sql = "SELECT * FROM vitimas"
+    result_victims = db.execute(sql)
+    db.close()
+
+    victims = []
+    for result in result_victims:
+      victims.append(Victim(*result))
+    
     return victims

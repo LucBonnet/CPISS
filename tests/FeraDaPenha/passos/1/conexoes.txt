@@ -1,0 +1,5 @@
+366191706;399606373;Antônio e Nilza são casados
+366191706;119721661;Tânia é filha de Antônio
+366191706;401783224;Solange é filha de Antônio
+399606373;119721661;Tânia é filha de Nilza
+399606373;401783224;Solange é filha de Nilza

@@ -2,22 +2,17 @@ from app.utils.randomId import generateRandomId
 
 from app.database.database import db
 
+from app.models.Graph import Graph
+
 class Modulo5:
   def __init__(self):
-    sql = "SELECT * FROM grafos WHERE etapa = 5"
-    db.connect()
-    result = db.execute(sql)
-    db.close()
+    graphs = Graph.findByStep(5)
 
-    if len(result) > 0:
-      self.graph_id = result[0][0]
+    if len(graphs) > 0:
+      self.graph_id = graphs[0].graph_id
       return
 
-    self.graph_id = generateRandomId()
-    db.connect()
-    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
-    db.insert(sql, (self.graph_id, 5))
-    db.close()
+    self.graph_id = Graph.create(5)
   
   def updateParticipationLevel(self, users_ids):
     sql = "UPDATE pessoas SET nivel_participacao = nivel_participacao + 1 WHERE id = ?"
@@ -32,27 +27,24 @@ class Modulo5:
   def main(self):
     print("Módulo 5")
 
-    sql = "SELECT c.* FROM grafos as g INNER JOIN conexoes as c on g.id = c.id_grafo WHERE g.etapa <> 5"
-    db.connect()
-    result_conns = db.execute(sql)
-    db.close()
-
-    # print(result_conns)
+    result_conns = Graph.findByStepWithConnections()
 
     graphs = set()
     connections = {}
-    for conn_id, id_p_a, id_p_b, description, weight, graph_id in result_conns:
-      graphs.add(graph_id) 
-      key = (id_p_a, id_p_b, graph_id)
+    for conn in result_conns:
+      graphs.add(conn["id_grafo"]) 
+      key = (conn["id_pessoa_a"], conn["id_pessoa_b"], conn["id_grafo"])
       r_key = tuple(reversed(key))
       if connections.get(key) != None:
-        connections[key] = self.combineEdgesWeights(connections[key], weight)
+        new_weight = self.combineEdgesWeights(connections[key], conn["peso"])
+        connections[key] = (new_weight, conn["descricao"] if conn["etpa"] == 2 else connections.get(key)[1])
       elif connections.get(r_key) != None:
-        connections[r_key] = self.combineEdgesWeights(connections[r_key], weight)
+        new_weight = self.combineEdgesWeights(connections[r_key], conn["peso"])
+        connections[r_key] = (new_weight, conn["descricao"] if conn["etpa"] == 2 else connections.get(key)[1])
       else:
-        connections[key] = weight
+        connections[key] = (conn["peso"], conn["descricao"])
 
-      self.updateParticipationLevel((id_p_a, id_p_b))
+      self.updateParticipationLevel((conn["id_pessoa_a"], conn["id_pessoa_b"]))
 
     for graph_id in graphs:
       sql = "DELETE FROM grafos WHERE id = ?"
@@ -61,7 +53,7 @@ class Modulo5:
       db.close()
 
     connections_ids = []
-    for key, new_weight in connections.items():
+    for key, (new_weight, description) in connections.items():
       if new_weight == 0:
         continue
       
@@ -69,6 +61,7 @@ class Modulo5:
 
       db.connect()
       sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
+      print(user_a_id, user_b_id, self.graph_id)
       result = db.insert(sql, (user_a_id, user_b_id, description, new_weight, self.graph_id))
       connections_ids.append(result)
       db.close()

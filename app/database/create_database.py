@@ -41,11 +41,6 @@ def create(reset=False):
     db.execute(sql)
 
     sql = """
-        INSERT INTO fatos (id) VALUES (?)
-    """
-    db.execute(sql, (0,))
-
-    sql = """
         CREATE TABLE IF NOT EXISTS pessoa_fato (
             id integer primary key AUTOINCREMENT,
             id_pessoa integer,

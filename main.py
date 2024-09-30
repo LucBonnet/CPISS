@@ -1,5 +1,3 @@
-import os
-
 # from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
@@ -13,33 +11,70 @@ from Imagens_usuarios.createDataset import sample
 
 from app.utils.getArgs import getArgs
 
+def executeTest(test_files):
+    police_database_file = test_files.get("police-database")
+
+    # m1 = Modulo1()
+    m2 = Modulo2()
+    m3 = Modulo3(police_database_file)
+    m4 = Modulo4()
+    m5 = Modulo5()
+    m6 = Modulo6()
+    m7 = Modulo7()
+
+    for i, step in enumerate(test_files.get("steps")):
+        m2Files = {
+            "pessoas": step.get("pessoas"),
+            "conexoes": step.get("conexoes"),
+            "vitimas": test_files.get("vitimas") if i == 0 else None,
+        }
+        
+        persons = m2.main(m2Files)
+
+        # m1.main(ids)
+
+        identifiers = []
+        if len(persons) > 0:
+            identifiers = list(map(lambda person: person.document, persons))
+        m3.main(identifiers)
+        
+
+        facts_values_file = step.get("fatos")
+        m4.main(facts_values_file)
+
+    m5.main()
+
+    m6.main()
+
+    m7.main()
+
 def main():
     args = getArgs()
     test_files = args.get("files")
+    
     reset_database = args.get("reset")
-
     create_database(reset_database)
 
-    m2 = Modulo2()
-    modulo2InitialData = {
-        "pessoas": test_files.get("pessoas") if test_files else None,
-        "conexoes": test_files.get("conexoes") if test_files else None,
-        "vitimas": test_files.get("vitimas")if test_files else None,
-    }
-    persons = m2.main(modulo2InitialData)
-
-    # m1 = Modulo1()
-    # m1.main(ids)
-
-    identifiers = list(map(lambda person: person[1], persons))
+    if test_files:
+        executeTest(test_files)
+        return
     
-    police_database_file = test_files.get("police-database")
-    m3 = Modulo3(police_database_file)
-    m3.main(identifiers)
 
-    facts_values_file = test_files.get("fatos")
+    m2 = Modulo2()
+    persons = m2.main()
+
+    identifiers = []
+    if len(persons) > 0:
+        identifiers = list(map(lambda person: person.document, persons))
+
+    m3 = Modulo3()
+    m3.main(identifiers)
+    
+    # m1 = Modulo1()
+    # m1.main()
+
     m4 = Modulo4()
-    m4.main(facts_values_file)
+    m4.main()
 
     m5 = Modulo5()
     m5.main()

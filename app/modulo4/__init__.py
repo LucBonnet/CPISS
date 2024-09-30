@@ -1,8 +1,4 @@
-import os
-
 from app.models.Fact import Fact
-
-facts_file_path = os.path.join(os.path.dirname(__file__), "fatos.txt")
 
 class Modulo4:
   def getDataFromFile(self, file_path):
@@ -15,7 +11,7 @@ class Modulo4:
     
     return facts
 
-  def main(self, facts_file_path):
+  def main(self, facts_file_path=None):
     print("Módulo 4")
 
     facts = self.getDataFromFile(facts_file_path)

@@ -4,6 +4,7 @@ import queue
 
 from app.database.database import db
 from app.models.UP import UP
+from app.models.Victim import Victim
 
 class Modulo7:
   def __init__(self):
@@ -27,17 +28,14 @@ class Modulo7:
     print("Módulo 7")
 
     id_vitima = 0
-    db.connect()
-    sql = "SELECT * FROM vitimas"
-    result_victims = db.execute(sql)
-    db.close()
+    victims = Victim.getAll()
 
-    if len(result_victims) == 0:
+    if len(victims) == 0:
       print("Vítima não encontrada")
       return    
     
-    victim = result_victims[0]
-    id_vitima = victim[0]
+    victim = victims[0]
+    id_vitima = victim.person_id
 
     # Primeira pessoa   (Mudar o numero depois do limit para mudar a quantidade de ids que quer na lista de maior importancia)
     sql = "SELECT id, importancia FROM pessoas ORDER BY importancia desc LIMIT 5"
@@ -126,8 +124,6 @@ class Modulo7:
             if id_filho not in ups:
                 # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
                 pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, caminho_atualizado)))
-
-    print("Vítima não encontrada")
 
     sql = "SELECT max(id) FROM pessoas"
     db.connect()

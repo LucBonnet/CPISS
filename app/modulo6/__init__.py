@@ -54,8 +54,9 @@ class Modulo6:
     degrees = self.getNodesDegrees()
     values = list(degrees.values())
 
-    self.omega = self.__calcOmega(values)
-    print(f"w = {self.omega}")
+    if len(values) > 0:
+      self.omega = self.__calcOmega(values)
+      print(f"w = {self.omega}")
     
   def __updateNP(self, ups_ids, ups_np, max_np):
     sql = "UPDATE pessoas SET np_formatado = ? WHERE id = ?"

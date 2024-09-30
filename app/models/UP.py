@@ -51,6 +51,7 @@ class UP:
           data_to_insert.append(person)
       db.close()
 
+
       db.connect()
       db.insert(insert_up, data_to_insert)
       db.close()
@@ -68,7 +69,12 @@ class UP:
       db.insert(insert_up, data_to_insert)
       db.close()
 
-    return data_to_insert
+    persons = []
+    for person in data_to_insert:
+      person = UP.findByCode(person[1])
+      persons.append(person)
+      
+    return persons
   
   @staticmethod
   def findByCode(code: str):

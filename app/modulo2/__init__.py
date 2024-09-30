@@ -1,7 +1,5 @@
 import os
 
-from app.database.database import db
-from app.utils.randomId import generateRandomId
 from app.models.UP import UP
 from app.models.Graph import Graph
 from app.models.Connection import Connection
@@ -13,9 +11,12 @@ victims_file_path = os.path.join(os.path.dirname(__file__), "vitimas.txt")
 
 class Modulo2:
     def getDataFromFiles(self, files):
-      persons_file_path = files["pessoas"]
-      connections_file_path = files["conexoes"]
-      victims_file_path = files["vitimas"]
+      if not files:
+        return [], [], []
+
+      persons_file_path = files.get("pessoas")
+      connections_file_path = files.get("conexoes")
+      victims_file_path = files.get("vitimas")
 
       persons = []
       if persons_file_path:
@@ -39,7 +40,7 @@ class Modulo2:
 
       return persons, connections, victims
 
-    def main(self, modulo2InitialData):
+    def main(self, modulo2InitialData = None):
       print("Módulo 2")
       pessoas_arquivo, conexoes_arquivo, vitimas_arquivo = self.getDataFromFiles(modulo2InitialData)
 
@@ -47,7 +48,7 @@ class Modulo2:
       print("Pessoas cadastradas:\n", pessoas)
 
       if len(pessoas) == 0:
-        return 
+        return []
 
       for conn in conexoes_arquivo:
         code_person_a, code_person_b, description = conn

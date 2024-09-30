@@ -3,6 +3,22 @@
     {
       "documento": "419976309",
       "nome": "Carlos"
+    },
+    {
+      "documento": "413148622",
+      "nome": "Guilherme"
+    },
+    {
+      "documento": "252639820",
+      "nome": "Sérgio"
+    },
+    {
+      "documento": "161919601",
+      "nome": "Elias"
+    },
+    {
+      "documento": "186007280",
+      "nome": "Murilo"
     }
   ],
   "fatos": [
@@ -17,7 +33,32 @@
       "descricao": "Roubo a mão armada"
     }
   ],
-  "conexoes": [],
+  "conexoes": [
+    {
+      "doc_pessoa_a": "419976309",
+      "doc_pessoa_b": "413148622",
+      "descricao": "Carlos e Guilherme são amigos",
+      "peso": 1
+    },
+    {
+      "doc_pessoa_a": "419976309",
+      "doc_pessoa_b": "252639820",
+      "descricao": "Carlos e Sérgio são amigos",
+      "peso": 1
+    },
+    {
+      "doc_pessoa_a": "419976309",
+      "descricao": "Carlos e Elias são amigos",
+      "doc_pessoa_b": "161919601",
+      "peso": 1
+    },
+    {
+      "doc_pessoa_a": "419976309",
+      "descricao": "Carlos e Murilo são amigos",
+      "doc_pessoa_b": "186007280",
+      "peso": 1
+    }
+  ],
   "pessoa_fato": [
     {
       "documento_pessoa": "419976309",

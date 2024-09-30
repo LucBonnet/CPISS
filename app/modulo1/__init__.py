@@ -116,6 +116,7 @@ class Modulo1:
     
   def main(self, person_ids: list[str]):
     print("Módulo 1")
+    # TODO deixar o módulo 1 independente do módulo 2
     users = person_ids
     users_preferences = {}
 
