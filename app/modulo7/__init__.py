@@ -10,152 +10,157 @@ from app.models.UP import UP
 from app.models.Connection import Connection
 from app.models.Victim import Victim
 
+
 class Modulo7:
-  def __init__(self):
-    self.graph = nx.Graph()
-    self.Wi = 0.5
-    self.Wc = 0.5
-    self.order = -1
+    def __init__(self):
+        self.graph = nx.Graph()
+        self.Wi = 0.5
+        self.Wc = 0.5
+        self.order = -1
 
-  def func_edge_color(self, u, v, path):
-    edge = [u,v]
-    if edge in path:
-      return "#FF0000";
+    def func_edge_color(self, u, v, path):
+        edge = [u, v]
+        if edge in path:
+            return "#FF0000"
 
-    edge = [v,u]
-    if edge in path:
-      return "#FF0000";
-  
-    return "#3F5BD2"
-  
-  def calculaCaminho(self, id_vitima, id_pessoa, importancia):
-    pq = queue.PriorityQueue()
+        edge = [v, u]
+        if edge in path:
+            return "#FF0000"
 
-    # Coloca a primeira pessoa na fila de prioridade
-    pq.put((self.order * importancia, (id_pessoa, importancia * self.Wi, [])))  
-    #      (-importancia, (id_pessoa, custo_acumulado = 0, caminho esta vazio pois é o primeiro caso))
+        return "#3F5BD2"
 
-    # Dicionário para armazenar o melhor caminho
-    visitados = {}
+    def calculaCaminho(self, id_vitima, id_pessoa, importancia):
+        pq = queue.PriorityQueue()
 
-    ups = set()
-    path = []
-    while not pq.empty():
-        _, pessoa_atual = pq.get()  # Remove e retorna o item de maior prioridade da fila de prioridade
+        # Coloca a primeira pessoa na fila de prioridade
+        pq.put((self.order * importancia, (id_pessoa, importancia * self.Wi, [])))
+        #      (-importancia, (id_pessoa, custo_acumulado = 0, caminho esta vazio pois é o primeiro caso))
 
-        # Retorna uma tupla de dois valores(1: importancia, 2: pessoa atual(id_pessoa, custo_acumulado, caminho))
-        id_pessoa_atual, custo_acumulado, caminho = pessoa_atual # Transforma o 2 valor da tupla na pessoa atual  
-        ups.add(id_pessoa_atual)
+        # Dicionário para armazenar o melhor caminho
+        visitados = {}
 
-        # Se encontrou a vítima, imprime o caminho e encerra
-        if id_pessoa_atual == id_vitima:
-            caminho.append(id_pessoa_atual)
-            print(f"custo para encontrar a vitima: {custo_acumulado}")
-            print(f"caminho: {caminho}")
-            for i in range(len(caminho)):
-              if i+1 < len(caminho):
-                path.append([caminho[i], caminho[i+1]])
-            break
+        ups = set()
+        path = []
+        while not pq.empty():
+            _, pessoa_atual = pq.get()  # Remove e retorna o item de maior prioridade da fila de prioridade
 
-        # Se já foi visitada com um custo menor, pula essa pessoa
-        if id_pessoa_atual in visitados and visitados[id_pessoa_atual] >= custo_acumulado:
-            continue
+            # Retorna uma tupla de dois valores(1: importancia, 2: pessoa atual(id_pessoa, custo_acumulado, caminho))
+            id_pessoa_atual, custo_acumulado, caminho = pessoa_atual  # Transforma o 2 valor da tupla na pessoa atual
+            ups.add(id_pessoa_atual)
 
-        # Atualiza o caminho para incluir a pessoa atual
-        caminho_atualizado = caminho + [id_pessoa_atual]
+            # Se encontrou a vítima, imprime o caminho e encerra
+            if id_pessoa_atual == id_vitima:
+                caminho.append(id_pessoa_atual)
+                print(f"custo para encontrar a vitima: {custo_acumulado}")
+                print(f"caminho: {caminho}")
+                for i in range(len(caminho)):
+                    if i + 1 < len(caminho):
+                        path.append([caminho[i], caminho[i + 1]])
+                break
 
-        # Marca como visitado com o menor custo
-        visitados[id_pessoa_atual] = custo_acumulado
+            # Se já foi visitada com um custo menor, pula essa pessoa
+            if id_pessoa_atual in visitados and visitados[id_pessoa_atual] >= custo_acumulado:
+                continue
 
-        # Consulta as conexões da pessoa atual
-        sql = """
-            SELECT 
-            c.id as id_conexao,
-            c."id_pessoa_A", 
-            c."id_pessoa_B", 
-            c.peso, 
-            p1.importancia as imp_p_a, 
-            p2.importancia as imp_p_b 
-            FROM conexoes as c 
-            INNER JOIN pessoas as p1 
-            on c."id_pessoa_A" = p1.id 
-            INNER JOIN pessoas as p2 
-            on c."id_pessoa_B" = p2.id
-            WHERE c."id_pessoa_A" = ? OR c."id_pessoa_B" = ?
-        """
+            # Atualiza o caminho para incluir a pessoa atual
+            caminho_atualizado = caminho + [id_pessoa_atual]
 
-        db.connect()
-        conexoes = db.execute(sql, (id_pessoa_atual, id_pessoa_atual))
-        db.close()
+            # Marca como visitado com o menor custo
+            visitados[id_pessoa_atual] = custo_acumulado
 
-        for (id_conexao, id_p_a, id_p_b, peso, imp_p_a, imp_p_b) in conexoes:
-            # Definir qual pessoa é o filho
-            imp_filho = imp_p_a
-            id_filho = id_p_a
-            if id_pessoa_atual == id_p_a:
-                imp_filho = imp_p_b
-                id_filho = id_p_b
-            
-            # Calcula novo valor acumulado para o filho com base nos pesos das conexões
-            valor = imp_filho * self.Wi + peso * self.Wc
-            valor_acumulado = custo_acumulado + valor
+            # Consulta as conexões da pessoa atual
+            sql = """
+                SELECT 
+                c.id as id_conexao,
+                c."id_pessoa_A", 
+                c."id_pessoa_B", 
+                c.peso, 
+                p1.importancia as imp_p_a, 
+                p2.importancia as imp_p_b 
+                FROM conexoes as c 
+                INNER JOIN pessoas as p1 
+                on c."id_pessoa_A" = p1.id 
+                INNER JOIN pessoas as p2 
+                on c."id_pessoa_B" = p2.id
+                WHERE c."id_pessoa_A" = ? OR c."id_pessoa_B" = ?
+            """
 
-            if id_filho not in ups:
-                # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
-                pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, caminho_atualizado)))
+            db.connect()
+            conexoes = db.execute(sql, (id_pessoa_atual, id_pessoa_atual))
+            db.close()
 
-    return path
-     
-  def main(self):
-    print("Módulo 7")
+            for (id_conexao, id_p_a, id_p_b, peso, imp_p_a, imp_p_b) in conexoes:
+                # Definir qual pessoa é o filho
+                imp_filho = imp_p_a
+                id_filho = id_p_a
+                if id_pessoa_atual == id_p_a:
+                    imp_filho = imp_p_b
+                    id_filho = id_p_b
 
-    id_vitima = 0
-    victims = Victim.getAll()
+                # Calcula novo valor acumulado para o filho com base nos pesos das conexões
+                valor = imp_filho * self.Wi + peso * self.Wc
+                valor_acumulado = custo_acumulado + valor
 
-    if len(victims) == 0:
-      print("Vítima não encontrada")
-      return    
-    
-    victim = victims[0]
-    id_vitima = victim.person_id
+                if id_filho not in ups:
+                    # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
+                    pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, caminho_atualizado)))
 
-    up_victim = UP.findById(id_vitima)
-    
-    print("\nVítima:")
-    print(up_victim)
+        return path
 
-    # Primeira pessoa   (Mudar o numero do limit para mudar a quantidade de ids que quer na lista de maior importancia)
-    ups = UP.getOrderByImportance()
+    def draw_graph(self, path: list[list[str]]):
+        persons = UP.getAll()
 
-    if len(ups) == 0:
-      return
-    
-    print("\nRanqueamento das unidades participantes:")
-    for i, up in enumerate(ups):
-      print(f"{(i+1)}. {up.name} - {formatImportance(up.importance)}%")
-    
-    # escolher qual id vc quer na lista
-    pessoa_maior_importancia = ups[0]
+        labels = {}
+        for person in persons:
+            self.graph.add_node(person.up_id)
+            labels[person.up_id] = f"{person.name}\n{formatImportance(person.importance)}%"
 
-    path = self.calculaCaminho(id_vitima, pessoa_maior_importancia.up_id, pessoa_maior_importancia.importance)
+        connections = Connection.getAll()
 
-    persons = UP.getAll()
+        for connection in connections:
+            self.graph.add_edge(connection.id_person_a, connection.id_person_b, weight=connection.weight)
 
-    labels = {}
-    for person in persons:
-      self.graph.add_node(person.up_id)
-      labels[person.up_id] = f"{person.name}\n{formatImportance(person.importance)}%"
+        plt.figure(figsize=(6, 6))
+        pos = nx.spring_layout(self.graph)
+        edge_color = [self.func_edge_color(u, v, path) for u, v in self.graph.edges]
+        nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color=edge_color, font_color="#FFFFFF",
+                node_size=2000, width=0.5)
+        edge_labels = dict([((u, v,), f"{d['weight']:.2f}") for u, v, d in self.graph.edges(data=True)])
+        nx.draw_networkx_labels(self.graph, pos, labels, font_color="#FFFFFF", font_size=10)
+        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels)
+        plt.show()
 
-    connections = Connection.getAll()
+    def main(self):
+        print("Módulo 7")
 
-    for connection in connections:
-      self.graph.add_edge(connection.id_person_a, connection.id_person_b, weight=connection.weight)
+        id_vitima = 0
+        victims = Victim.getAll()
 
-    plt.figure(figsize=(6, 6))
-    pos = nx.spring_layout(self.graph)  
-    edge_color = [self.func_edge_color(u, v, path) for u,v in self.graph.edges]
-    nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color=edge_color, font_color="#FFFFFF", node_size=2000, width=0.5)
-    edge_labels = dict([((u,v,), f"{d['weight']:.2f}") for u,v,d in self.graph.edges(data=True)])
-    nx.draw_networkx_labels(self.graph, pos, labels, font_color="#FFFFFF", font_size=10)
-    nx.draw_networkx_edge_labels(self.graph, pos, edge_labels)
-    plt.show()
+        if len(victims) == 0:
+            print("Vítima não encontrada")
+            return
+
+        victim = victims[0]
+        id_vitima = victim.person_id
+
+        up_victim = UP.findById(id_vitima)
+
+        print("\nVítima:")
+        print(up_victim)
+
+        # Primeira pessoa   (Mudar o numero do limit para mudar a quantidade de ids que quer na lista de maior importancia)
+        ups = UP.getOrderByImportance()
+
+        if len(ups) == 0:
+            return
+
+        print("\nRanqueamento das unidades participantes:")
+        for i, up in enumerate(ups):
+            print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+
+        # escolher qual id vc quer na lista
+        pessoa_maior_importancia = ups[0]
+
+        path = self.calculaCaminho(id_vitima, pessoa_maior_importancia.up_id, pessoa_maior_importancia.importance)
+
+        self.draw_graph(path)

@@ -11,7 +11,8 @@ from Imagens_usuarios.createDataset import sample
 
 from app.utils.getArgs import getArgs
 
-def executeTest(test_files):
+
+def execute_test(test_files):
     police_database_file = test_files.get("police-database")
 
     # m1 = Modulo1()
@@ -23,13 +24,13 @@ def executeTest(test_files):
     m7 = Modulo7()
 
     for i, step in enumerate(test_files.get("steps")):
-        m2Files = {
+        m2_files = {
             "pessoas": step.get("pessoas"),
             "conexoes": step.get("conexoes"),
             "vitimas": test_files.get("vitimas") if i == 0 else None,
         }
         
-        persons = m2.main(m2Files)
+        persons = m2.main(m2_files)
 
         # m1.main(ids)
 
@@ -37,7 +38,6 @@ def executeTest(test_files):
         if len(persons) > 0:
             identifiers = list(map(lambda person: person.document, persons))
         m3.main(identifiers)
-        
 
         facts_values_file = step.get("fatos")
         m4.main(facts_values_file)
@@ -48,6 +48,7 @@ def executeTest(test_files):
 
     m7.main()
 
+
 def main():
     args = getArgs()
     test_files = args.get("files")
@@ -56,9 +57,8 @@ def main():
     create_database(reset_database)
 
     if test_files:
-        executeTest(test_files)
+        execute_test(test_files)
         return
-    
 
     m2 = Modulo2()
     persons = m2.main()
@@ -84,6 +84,7 @@ def main():
 
     m7 = Modulo7()
     m7.main()
-    
+
+
 if __name__ == "__main__":
     main()

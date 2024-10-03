@@ -20,7 +20,7 @@ def getArgs():
 
   return result
 
-def getTestFiles(path_name: str) -> None | dict:
+def getTestFiles(path_name: str) -> dict:
   tests_dir = os.path.join(os.path.dirname(__file__), '..', '..', "tests")
   test_path = os.path.join(tests_dir, path_name)
   

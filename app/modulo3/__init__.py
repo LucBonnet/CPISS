@@ -1,6 +1,6 @@
 from app.database.database import db
 from app.modulo3.database.database import db_policia
-from app.modulo3.database.populateByFile import populateByFile
+from app.modulo3.database.populateByFile import populate_by_file
 
 from app.models.Graph import Graph
 from app.models.Connection import Connection
@@ -8,8 +8,8 @@ from app.models.UP import UP
 
 
 class Modulo3:
-    def __init__(self, file) -> None:
-        populateByFile(file)
+    def __init__(self, file=None) -> None:
+        populate_by_file(file)
         self.visited_rg = set()  # Conjunto para rastrear RGs visitados
 
     def save_person(self, identificador):
