@@ -15,8 +15,8 @@ from app.utils.getArgs import getArgs
 def execute_test(test_files):
     police_database_file = test_files.get("police-database")
 
-    m1 = Modulo1()
     m2 = Modulo2()
+    m1 = Modulo1()
     m3 = Modulo3(police_database_file)
     m4 = Modulo4()
     m5 = Modulo5()
@@ -24,6 +24,8 @@ def execute_test(test_files):
     m7 = Modulo7()
 
     for i, step in enumerate(test_files.get("steps")):
+        print(step)
+
         m2_files = {
             "pessoas": step.get("pessoas"),
             "conexoes": step.get("conexoes"),
@@ -38,7 +40,7 @@ def execute_test(test_files):
             identifiers = list(map(lambda person: person.document, persons))
         m3.main(identifiers)
 
-        m1.main()
+        m1.main(step["users_images"])
 
         facts_values_file = step.get("fatos")
         m4.main(facts_values_file)
@@ -53,7 +55,7 @@ def execute_test(test_files):
 def main():
     args = getArgs()
     test_files = args.get("files")
-    
+
     reset_database = args.get("reset")
     create_database(reset_database)
 

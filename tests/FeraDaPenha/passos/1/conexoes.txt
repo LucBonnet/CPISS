@@ -3,3 +3,4 @@
 366191706;401783224;Solange é filha de Antônio
 399606373;119721661;Tânia é filha de Nilza
 399606373;401783224;Solange é filha de Nilza
+401783224;119721661;Solange e Tânia são irmãs

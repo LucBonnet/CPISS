@@ -20,11 +20,12 @@ class Modulo1:
     self.model = Inception_V3()
     self.num_of_categories = len(self.model.categories)
     self.graph_id = None
+    self.users_path = None
     print("Modelo carregado")
 
   def get_user_images(self, user_id: str):
     try: 
-      with open(USERS_PATH + "/" + str(user_id) + '.txt', 'r') as file: 
+      with open(self.users_path + "/" + str(user_id) + '.txt', 'r') as file:
         user_images = [img.strip() for img in file.readlines()]
 
       return user_images
@@ -69,7 +70,10 @@ class Modulo1:
     db.close()
     
     num_of_users = len(preferences)
-    
+
+    if num_of_users == 0:
+      return
+
     users_divergences = np.empty((num_of_users, num_of_users), dtype=float)
     users_ids = [pref[0] for pref in preferences]
 
@@ -117,16 +121,19 @@ class Modulo1:
 
     return users_divergences
     
-  def main(self):
+  def main(self, users_images_path = None):
     print("Módulo 1")
+    self.users_path = users_images_path
+
     persons = UP.getAll()
 
     users = persons
     users_preferences = {}
 
     for user in users:
-      user_id = user.up_id
+      user_id = user.document
       user_images = self.get_user_images(user_id)
+      print(user_images)
       if len(user_images) == 0:
         continue
 
@@ -144,10 +151,10 @@ class Modulo1:
 
       db.connect()
       sql = """INSERT OR REPLACE INTO preferencias (id_pessoa, valores) VALUES (?,?)"""
-      db.execute(sql, (int(user_id), formatted_values))
+      db.execute(sql, (int(user.up_id), formatted_values))
       db.close()
       
-      print("Preferências do usuário " + str(user_id))
+      print("Preferências do usuário " + str(user.name))
 
     if len(persons) <= 1:
       return [[]]
