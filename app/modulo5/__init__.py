@@ -98,6 +98,8 @@ class Modulo5:
             else:
                 conns[key] = conn1
 
+            self.updateParticipationLevel((conn["id_pessoa_a"], conn["id_pessoa_b"]))
+
         for graph_id in graphs:
             sql = "DELETE FROM grafos WHERE id = ?"
             db.connect()

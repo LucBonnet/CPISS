@@ -133,7 +133,7 @@ class Modulo1:
     for user in users:
       user_id = user.document
       user_images = self.get_user_images(user_id)
-      print(user_images)
+
       if len(user_images) == 0:
         continue
 

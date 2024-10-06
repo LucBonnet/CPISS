@@ -33,7 +33,7 @@ class Modulo7:
         pq = queue.PriorityQueue()
 
         # Coloca a primeira pessoa na fila de prioridade
-        pq.put((self.order * importancia, (id_pessoa, importancia * self.Wi, [])))
+        pq.put((self.order * importancia, (id_pessoa, importancia * self.Wi, 0, [])))
         #      (-importancia, (id_pessoa, custo_acumulado = 0, caminho esta vazio pois é o primeiro caso))
 
         # Dicionário para armazenar o melhor caminho
@@ -45,7 +45,7 @@ class Modulo7:
             _, pessoa_atual = pq.get()  # Remove e retorna o item de maior prioridade da fila de prioridade
 
             # Retorna uma tupla de dois valores(1: importancia, 2: pessoa atual(id_pessoa, custo_acumulado, caminho))
-            id_pessoa_atual, custo_acumulado, caminho = pessoa_atual  # Transforma o 2 valor da tupla na pessoa atual
+            id_pessoa_atual, custo_acumulado, num_pessoas, caminho = pessoa_atual  # Transforma o 2 valor da tupla na pessoa atual
             ups.add(id_pessoa_atual)
 
             # Se encontrou a vítima, imprime o caminho e encerra
@@ -98,12 +98,12 @@ class Modulo7:
                     id_filho = id_p_b
 
                 # Calcula novo valor acumulado para o filho com base nos pesos das conexões
-                valor = imp_filho * self.Wi + peso * self.Wc
-                valor_acumulado = custo_acumulado + valor
+                valor = (imp_filho * self.Wi) + (peso * self.Wc)
+                valor_acumulado = custo_acumulado + valor - num_pessoas
 
                 if id_filho not in ups:
                     # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
-                    pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, caminho_atualizado)))
+                    pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, num_pessoas + 1, caminho_atualizado)))
 
         return path
 
@@ -144,6 +144,12 @@ class Modulo7:
         id_vitima = victim.person_id
 
         up_victim = UP.findById(id_vitima)
+
+        persons = UP.getAll()
+        for person in persons:
+            print()
+            print(person)
+            print()
 
         print("\nVítima:")
         print(up_victim)

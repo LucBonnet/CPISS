@@ -24,8 +24,6 @@ def execute_test(test_files):
     m7 = Modulo7()
 
     for i, step in enumerate(test_files.get("steps")):
-        print(step)
-
         m2_files = {
             "pessoas": step.get("pessoas"),
             "conexoes": step.get("conexoes"),
@@ -33,7 +31,6 @@ def execute_test(test_files):
         }
 
         persons = m2.main(m2_files)
-
 
         identifiers = []
         if len(persons) > 0:
