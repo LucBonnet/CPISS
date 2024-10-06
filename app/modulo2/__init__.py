@@ -46,7 +46,6 @@ class Modulo2:
         pessoas_arquivo, conexoes_arquivo, vitimas_arquivo = self.getDataFromFiles(modulo2_initial_data)
 
         created_persons = UP.create(pessoas_arquivo)
-        print("Pessoas cadastradas:\n", created_persons)
 
         if len(created_persons) == 0:
             return []

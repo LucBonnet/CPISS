@@ -29,14 +29,14 @@ class UP:
 
   def __str__(self) -> str:
     return f"Id: {self.up_id}\nNome: {self.name}\nRG: {self.document}\nNível de participação: {self.participation_level}\nNível de participação [0,1]: {self.formmated_pl}\nImportância: {self.importance:.10f}"
-  
+
   @staticmethod
   def create(personData):
     insert_up = "INSERT OR IGNORE INTO pessoas (nome, identificador) VALUES (?, ?);"
     select = "SELECT identificador FROM pessoas WHERE identificador = ?"
-    
+
     data_to_insert = []
-    
+
     if type(personData) is list:
       db.connect()
       for person in personData:
@@ -49,7 +49,7 @@ class UP:
       db.connect()
       db.insert(insert_up, data_to_insert)
       db.close()
-    
+
     elif type(personData) is tuple:
       data_to_insert = [personData]
 
@@ -67,9 +67,9 @@ class UP:
     for person in data_to_insert:
       person = UP.findByCode(person[1])
       persons.append(person)
-      
+
     return persons
-  
+
   @staticmethod
   def findByCode(code: str):
     sql = "SELECT id, identificador, nome FROM pessoas WHERE identificador = ?"
@@ -81,11 +81,11 @@ class UP:
       return None
 
     return UP(*result[0])
-  
+
   @staticmethod
   def getOrderByImportance(limit=None):
     sql = "SELECT * FROM pessoas ORDER BY importancia DESC"
-    
+
     db.connect()
 
     if limit != None:
@@ -99,15 +99,16 @@ class UP:
     ups: list[UP] = []
     if len(result) == 0:
       return ups
-    
+
     for up in result:
       ups.append(UP(*up))
 
     return ups
-    
+
+  @staticmethod
   def findById(up_id: str):
     sql = "SELECT * FROM pessoas WHERE id = ?"
-    
+
     db.connect()
     result = db.execute(sql, (up_id,))
     db.close()
@@ -117,6 +118,7 @@ class UP:
 
     return UP(*result[0])
 
+  @staticmethod
   def getAll():
     persons: list[UP] = []
 
@@ -127,9 +129,9 @@ class UP:
     db.close()
     max_id = result[0][0]
 
-    if max_id == None:
+    if max_id is None:
       return persons
-    
+
     batch_size = 100
     for i in range(0, max_id, batch_size):
       sql = "SELECT * FROM pessoas WHERE id >= ? AND id < ?"
@@ -142,5 +144,55 @@ class UP:
 
       for up in result:
         persons.append(UP(*up))
-    
+
     return persons
+
+  def findDifferenceImages(self, images: list[str]):
+    sql = "SELECT * FROM imagens_usuarios WHERE id_pessoa = ?"
+
+    db.connect()
+    user_images = db.execute(sql, (self.up_id,))
+    db.close()
+
+    user_images_names = [img[2] for img in user_images]
+
+    new_images = []
+    for img in images:
+      if img not in user_images_names:
+        new_images.append(img)
+
+    remove_images = []
+    for img in user_images_names:
+      if img not in images:
+        remove_images.append(img)
+
+    for img in remove_images:
+      sql = "DELETE FROM imagens_usuarios WHERE id_pessoa = ? AND imagem = ?"
+      db.connect()
+      db.execute(sql, (self.up_id, img))
+      db.close()
+
+    for img in new_images:
+      sql = "INSERT INTO imagens_usuarios (id_pessoa, imagem) VALUES (?,?)"
+      db.connect()
+      db.execute(sql, (self.up_id, img))
+      db.close()
+
+    if len(new_images) > 0 or len(remove_images) > 0:
+      return True
+
+    return False
+
+  def getImages(self):
+    sql = "SELECT * FROM imagens_usuarios WHERE id_pessoa = ?"
+
+    images: list[str] = []
+
+    db.connect()
+    result = db.execute(sql, (self.up_id,))
+    db.close()
+
+    for image in result:
+      images.append(image[2])
+
+    return images

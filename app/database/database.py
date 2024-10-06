@@ -33,7 +33,7 @@ class Database:
     def execute(self, sql, data=None):
         cursor = self.conn.cursor()
 
-        if data != None:
+        if data is not None:
             cursor.execute(sql, data)
         else:
             cursor.execute(sql)

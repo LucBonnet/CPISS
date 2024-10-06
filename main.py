@@ -1,4 +1,4 @@
-# from app.modulo1 import Modulo1
+from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
 from app.modulo4 import Modulo4
@@ -15,7 +15,7 @@ from app.utils.getArgs import getArgs
 def execute_test(test_files):
     police_database_file = test_files.get("police-database")
 
-    # m1 = Modulo1()
+    m1 = Modulo1()
     m2 = Modulo2()
     m3 = Modulo3(police_database_file)
     m4 = Modulo4()
@@ -29,24 +29,25 @@ def execute_test(test_files):
             "conexoes": step.get("conexoes"),
             "vitimas": test_files.get("vitimas") if i == 0 else None,
         }
-        
+
         persons = m2.main(m2_files)
 
-        # m1.main(ids)
 
         identifiers = []
         if len(persons) > 0:
             identifiers = list(map(lambda person: person.document, persons))
         m3.main(identifiers)
 
+        m1.main()
+
         facts_values_file = step.get("fatos")
         m4.main(facts_values_file)
 
-    m5.main()
+        m5.main()
 
-    m6.main()
+        m6.main()
 
-    m7.main()
+        m7.main()
 
 
 def main():
@@ -70,8 +71,8 @@ def main():
     m3 = Modulo3()
     m3.main(identifiers)
     
-    # m1 = Modulo1()
-    # m1.main()
+    m1 = Modulo1()
+    m1.main()
 
     m4 = Modulo4()
     m4.main()

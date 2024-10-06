@@ -120,7 +120,7 @@ class Modulo7:
         for connection in connections:
             self.graph.add_edge(connection.id_person_a, connection.id_person_b, weight=connection.weight)
 
-        plt.figure(figsize=(6, 6))
+        plt.figure(figsize=(12, 12))
         pos = nx.spring_layout(self.graph)
         edge_color = [self.func_edge_color(u, v, path) for u, v in self.graph.edges]
         nx.draw(self.graph, pos, with_labels=False, node_color='#2C4C7C', edge_color=edge_color, font_color="#FFFFFF",

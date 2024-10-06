@@ -5,9 +5,12 @@ import numpy as np
 import math
 import os
 
+from Imagens_usuarios.createDataset import person
 from app.database.database import db
-from app.utils.randomId import generateRandomId
 from app.modulo1.Inception_V3 import Inception_V3
+
+from app.models.Graph import Graph
+from app.models.UP import UP
 
 IMAGES_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'Imagens_usuarios', 'Generalist961')
 USERS_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'Imagens_usuarios', 'users_data')
@@ -16,11 +19,10 @@ class Modulo1:
   def __init__(self):
     self.model = Inception_V3()
     self.num_of_categories = len(self.model.categories)
-    print("Modelo carregado")
-    
     self.graph_id = None
-  
-  def getUserImages(self, user_id: str): 
+    print("Modelo carregado")
+
+  def get_user_images(self, user_id: str):
     try: 
       with open(USERS_PATH + "/" + str(user_id) + '.txt', 'r') as file: 
         user_images = [img.strip() for img in file.readlines()]
@@ -29,7 +31,7 @@ class Modulo1:
     except:
       return []
 
-  def calcUserPreference(self, user_images: List[str]):
+  def calc_user_preference(self, user_images: List[str]):
     user_preferences = np.full(self.num_of_categories, 0, dtype=float)
 
     for image in user_images:
@@ -40,10 +42,11 @@ class Modulo1:
 
     return user_preferences
 
-  def calcUsersDivergence(self, userA_prefs: list[float], userB_prefs: list[float]):
+  def calc_users_divergence(self, userA_prefs: list[float], userB_prefs: list[float]):
     Dkl_A_B = 0
     Dkl_B_A = 0
 
+    Dkl = 0
     for i in range(self.num_of_categories):
       Dkl_A_B += userA_prefs[i] * math.log(userA_prefs[i] / userB_prefs[i])
       Dkl_B_A += userB_prefs[i] * math.log(userB_prefs[i] / userA_prefs[i])
@@ -52,14 +55,14 @@ class Modulo1:
 
     return Dkl
   
-  def setDivergence(self, user_a_id, user_b_id, divergence):
+  def set_divergence(self, user_a_id, user_b_id, divergence):
     db.connect()
     sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"
     db.insert(sql, (user_a_id, user_b_id, divergence, self.graph_id))
     db.close()
 
 
-  def comparePreferences(self):
+  def compare_preferences(self):
     db.connect()
     sql = f"SELECT * FROM preferencias"
     preferences = db.execute(sql)
@@ -84,18 +87,18 @@ class Modulo1:
         values = preferences[j][1]
         userB_prefs = [float(value) for value in values.split(";")]
 
-        divergence = self.calcUsersDivergence(userA_prefs, userB_prefs)
+        divergence = self.calc_users_divergence(userA_prefs, userB_prefs)
 
         if divergence > max_divergence:
           max_divergence = divergence
 
-        if min_divergence == None or divergence < min_divergence:
+        if min_divergence is None or divergence < min_divergence:
           min_divergence = divergence
 
         users_divergences[i][j] = divergence
         users_divergences[j][i] = divergence
 
-        print(f"""[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}""")
+        print(f"[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}")
 
     def normalize(value):
       return 1 - ((value - min_divergence) / (max_divergence - min_divergence))
@@ -110,23 +113,31 @@ class Modulo1:
           continue
 
         normalized_divergence = users_divergences[i][j]
-        self.setDivergence(users_ids[i], users_ids[j], normalized_divergence)
-    
+        self.set_divergence(users_ids[i], users_ids[j], normalized_divergence)
+
     return users_divergences
     
-  def main(self, person_ids: list[str]):
+  def main(self):
     print("Módulo 1")
-    # TODO deixar o módulo 1 independente do módulo 2
-    users = person_ids
+    persons = UP.getAll()
+
+    users = persons
     users_preferences = {}
 
     for user in users:
-      user_id = str(user)
-      user_images = self.getUserImages(user_id)
+      user_id = user.up_id
+      user_images = self.get_user_images(user_id)
       if len(user_images) == 0:
         continue
 
-      preferences = self.calcUserPreference(user_images)
+      images_has_difference = user.findDifferenceImages(user_images)
+
+      if not images_has_difference:
+        continue
+
+      user_images = user.getImages()
+
+      preferences = self.calc_user_preference(user_images)
       users_preferences[user_id] = preferences
 
       formatted_values = ";".join([format(pref, "e") for pref in preferences])
@@ -136,18 +147,14 @@ class Modulo1:
       db.execute(sql, (int(user_id), formatted_values))
       db.close()
       
-      print("Preferências do usuário " + user_id)
+      print("Preferências do usuário " + str(user_id))
 
-    if len(person_ids) <= 1:
+    if len(persons) <= 1:
       return [[]]
-    
-    self.graph_id = generateRandomId()
-    db.connect()
-    sql = """INSERT INTO grafos (id, etapa) VALUES (?,?)"""
-    db.insert(sql, (self.graph_id, 1))
-    db.close()
 
-    return self.comparePreferences()
+    self.graph_id = Graph.create(1)
+
+    return self.compare_preferences()
       
 def test():
   m1 = Modulo1()

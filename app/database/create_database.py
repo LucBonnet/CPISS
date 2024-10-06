@@ -80,6 +80,17 @@ def create(reset=False):
     db.execute(sql)
 
     sql = """
+            CREATE TABLE IF NOT EXISTS imagens_usuarios ( 
+                id integer primary key AUTOINCREMENT,
+                id_pessoa integer,
+                imagem text,
+                FOREIGN KEY (id_pessoa) REFERENCES pessoas(id)
+            );
+        """
+
+    db.execute(sql)
+
+    sql = """
         CREATE TABLE IF NOT EXISTS vitimas (
             id_pessoa integer primary key,
             FOREIGN KEY (id_pessoa) REFERENCES pessoas(id)
