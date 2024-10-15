@@ -1,5 +1,9 @@
 networkx
-pyplot
-sqlite3
-psycopg2
-pytorch
+matplotlib
+numpy
+torch
+pillow
+torchvision
+debugpy
+tensorflow
+Flask

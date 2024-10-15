@@ -39,3 +39,10 @@ class Victim():
       victims.append(Victim(*result))
     
     return victims
+
+  def toJSON(self):
+    data = {
+      "id": self.person_id
+    }
+
+    return data

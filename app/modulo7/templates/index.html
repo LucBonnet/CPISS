@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas</title>
+
+    {% for file in css_files %}
+    <link rel="stylesheet" href="{{file}}">
+    {% endfor %}
+
+    <link rel="stylesheet" href="../static/styles/global.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="1920px" height="1152px"></canvas>
+
+    <div id="container">
+        <nav>
+            <ul id="nav-persons"></ul>
+        </nav>
+    </div>
+
+    {% for file in js_files %}
+    <script type="text/javascript" src={{file}}>  </script>
+    {% endfor %}
+</body>
+
+</html>

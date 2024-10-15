@@ -53,3 +53,15 @@ class Connection():
         connections.append(Connection(*conn))
     
     return connections
+
+  def toJSON(self):
+    data = {
+      "id": self.conn_id,
+      "id_person_a": self.id_person_a,
+      "id_person_b": self.id_person_b,
+      "description": self.description,
+      "weight": self.weight,
+      "id_graph": self.id_graph,
+    }
+
+    return data

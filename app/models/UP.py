@@ -13,6 +13,8 @@ class UP:
     self.importance: float = importance
 
   def addFact(self, fact_value: float) -> None:
+    if fact_value is None:
+      return
     if fact_value < 0 or fact_value > 1:
       raise Exception("Fato com valor inválido! Os valores dos fatos devem ser um número entre 0 e 1")
 
@@ -84,7 +86,7 @@ class UP:
 
   @staticmethod
   def getOrderByImportance(limit=None):
-    sql = "SELECT * FROM pessoas ORDER BY importancia DESC"
+    sql = "SELECT * FROM pessoas as p LEFT JOIN pessoa_fato as pf on p.id = pf.id_pessoa LEFT JOIN fatos f on f.id = pf.id_fato ORDER BY importancia DESC"
 
     db.connect()
 
@@ -96,14 +98,24 @@ class UP:
 
     db.close()
 
+    persons = {}
+
     ups: list[UP] = []
     if len(result) == 0:
       return ups
 
     for up in result:
-      ups.append(UP(*up))
+      person_data = up[:6]
 
-    return ups
+      up_id = up[0]
+      if persons.get(up_id) is None:
+        new_up = UP(*person_data)
+        new_up.addFact(up[10])
+        persons[up_id] = new_up
+      else:
+        persons[up_id].addFact(up[10])
+
+    return persons.values()
 
   @staticmethod
   def findById(up_id: str):
@@ -196,3 +208,16 @@ class UP:
       images.append(image[2])
 
     return images
+  
+  def toJSON(self):
+    data = {
+      "id": self.up_id,
+      "name": self.name,
+      "identifier": self.document,
+      "facts": self.facts,
+      "paticipation_level": self.participation_level,
+      "normalized_pl": self.formmated_pl,
+      "importance": self.importance
+    }
+
+    return data

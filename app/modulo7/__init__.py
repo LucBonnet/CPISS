@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-
+import webbrowser
 import queue
+import math
 
 from app.utils.formatImportance import formatImportance
 
@@ -10,6 +11,7 @@ from app.models.UP import UP
 from app.models.Connection import Connection
 from app.models.Victim import Victim
 
+from app.modulo7.api import App
 
 class Modulo7:
     def __init__(self):
@@ -17,6 +19,10 @@ class Modulo7:
         self.Wi = 0.5
         self.Wc = 0.5
         self.order = -1
+
+        self.persons = UP.getOrderByImportance()
+        self.connections = Connection.getAll()
+        self.victim = 0
 
     def func_edge_color(self, u, v, path):
         edge = [u, v]
@@ -29,7 +35,7 @@ class Modulo7:
 
         return "#3F5BD2"
 
-    def calculaCaminho(self, id_vitima, id_pessoa, importancia):
+    def calculaCaminho(self, id_pessoa, importancia):
         pq = queue.PriorityQueue()
 
         # Coloca a primeira pessoa na fila de prioridade
@@ -41,6 +47,7 @@ class Modulo7:
 
         ups = set()
         path = []
+        path1 = []
         while not pq.empty():
             _, pessoa_atual = pq.get()  # Remove e retorna o item de maior prioridade da fila de prioridade
 
@@ -49,10 +56,11 @@ class Modulo7:
             ups.add(id_pessoa_atual)
 
             # Se encontrou a vítima, imprime o caminho e encerra
-            if id_pessoa_atual == id_vitima:
+            if id_pessoa_atual == self.victim:
                 caminho.append(id_pessoa_atual)
                 print(f"custo para encontrar a vitima: {custo_acumulado}")
                 print(f"caminho: {caminho}")
+                path1=caminho
                 for i in range(len(caminho)):
                     if i + 1 < len(caminho):
                         path.append([caminho[i], caminho[i + 1]])
@@ -104,8 +112,24 @@ class Modulo7:
                 if id_filho not in ups:
                     # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
                     pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, num_pessoas + 1, caminho_atualizado)))
+                    
+        return path1
 
-        return path
+    def get_path(self, person_id):
+        if not person_id:
+            return None
+        
+        person = None
+        for p in self.persons:
+            if str(p.up_id) == person_id:
+                person = p
+                break
+
+        if person is None:
+            return None
+        
+        path = self.calculaCaminho(person.up_id, person.importance)
+        return path;
 
     def draw_graph(self, path: list[list[str]]):
         persons = UP.getAll()
@@ -130,7 +154,81 @@ class Modulo7:
         nx.draw_networkx_edge_labels(self.graph, pos, edge_labels)
         plt.show()
 
+    def get_persons(self):
+        persons = UP.getOrderByImportance()
+        persons = list(map(lambda p: p.toJSON(), persons))
+        return persons
+    
+    def get_victims(self):
+        victims = Victim.getAll()
+        victims = list(map(lambda v: v.toJSON(), victims))
+        return victims
+
+    def get_connections(self):
+        connections = Connection.getAll()
+        connections = list(map(lambda c: c.toJSON(), connections))
+        return connections
+
+    def get_graph(self):
+        graph = nx.Graph()
+        for person in self.persons:
+            graph.add_node(person.up_id)
+
+        for connection in self.connections:
+            graph.add_edge(connection.id_person_a, connection.id_person_b)
+
+        k = len(self.persons) / 2 / math.sqrt(len(self.persons))
+        iterations = round(3 / 4 * len(self.persons)) * 10
+        print("k = " + str(k))
+        print("iterations = " + str(iterations))
+
+        pos = nx.spring_layout(graph, scale=1, seed=self.connections[0].id_graph % 1000)
+
+        persons = []
+        for p in self.persons:
+            json_p = p.toJSON() 
+            person_pos = pos.get(p.up_id)
+            json_p["position"] = {}
+            json_p["position"]["x"] = person_pos[0]
+            json_p["position"]["y"] = person_pos[1]
+            persons.append(json_p)
+
+        return persons
+
     def main(self):
+        print("Módulo 7")
+        
+        id_vitima = 0
+        victims = Victim.getAll()
+
+        if len(victims) == 0:
+            print("Vítima não encontrada")
+            return
+
+        victim = victims[0]
+        id_vitima = victim.person_id
+
+        victim = UP.findById(id_vitima)
+
+        persons = UP.getAll()
+        for person in persons:
+            print()
+            print(person)
+            print()
+
+        print("\nVítima:")
+        print(victim)
+        self.victim = victim.up_id
+
+        self.persons = UP.getOrderByImportance()
+
+        print("\nRanqueamento das unidades participantes:")
+        for i, up in enumerate(self.persons):
+            print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+
+        App(self)
+
+    def main2(self):
         print("Módulo 7")
 
         id_vitima = 0
@@ -143,16 +241,13 @@ class Modulo7:
         victim = victims[0]
         id_vitima = victim.person_id
 
-        up_victim = UP.findById(id_vitima)
+        self.victim = UP.findById(id_vitima)
 
         persons = UP.getAll()
         for person in persons:
             print()
             print(person)
             print()
-
-        print("\nVítima:")
-        print(up_victim)
 
         # Primeira pessoa   (Mudar o numero do limit para mudar a quantidade de ids que quer na lista de maior importancia)
         ups = UP.getOrderByImportance()
