@@ -195,7 +195,7 @@ class Modulo7:
 
         return persons
 
-    def main(self):
+    def main(self, return_rank=False):
         print("Módulo 7")
         
         id_vitima = 0
@@ -223,8 +223,13 @@ class Modulo7:
         self.persons = UP.getOrderByImportance()
 
         print("\nRanqueamento das unidades participantes:")
+        rank = []
         for i, up in enumerate(self.persons):
+            rank.append(up)
             print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+
+        if return_rank:
+            return rank
 
         App(self)
 

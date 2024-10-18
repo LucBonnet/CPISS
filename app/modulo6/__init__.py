@@ -125,7 +125,7 @@ class Modulo6:
 
             if len(result) > 0:
                 person = UP(*result[0])
-                facts.append(person.formmated_pl)
+                facts.append(person.formatted_pl)
 
             importance = self.__p(facts)
 
