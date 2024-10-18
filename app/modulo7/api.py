@@ -8,7 +8,11 @@ m7 = None
 def App(modulo7, port=3333):
     global m7
     m7 = modulo7
-    app.run(port=port)
+
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    
+    app.run(port=port, debug=True)
 
 def compile_javascript():
     path = os.path.join(os.path.dirname(__file__), "static", "scripts")

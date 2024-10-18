@@ -1,7 +1,7 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const nav_persons = document.getElementById("nav-persons")
+const rank_persons = document.getElementById("rank-persons")
 
 class App {
   constructor(graph, connections) {
@@ -41,30 +41,17 @@ class App {
     this.formatConnections();
     this.createNav();
 
-    canvas.addEventListener('mousedown', (e) => {
-      this.mouseClicked = true;
-      this.initialX = e.clientX;
-      this.initialY = e.clientY;
-    });
-
-    canvas.addEventListener('mousemove', (event) => {
-      if(!this.mouseClicked) return;
-
-      this.dx = (this.initialX - event.clientX) * -0.2;
-      this.dy = (this.initialY - event.clientY) * -0.2;
-
-      ctx.translate(dx, dy);
-    });
-
-    canvas.addEventListener('mouseup', () => {
-      this.mouseClicked = false;
-    });
-
-    document.addEventListener('mouseup', () => {
-      this.mouseClicked = false;
-    })
+    canvas.addEventListener('click', this.onCanvasClick);
 
     requestAnimationFrame(() => this.update());
+  }
+
+  findNodeByPosition(x, y) {
+    
+  }
+
+  onCanvasClick(evt) {
+
   }
 
   mapPersons() {
@@ -102,7 +89,7 @@ class App {
     return `${newValue}%`.replace(".",  ",");
   }
 
-  async calcPath(_, id) {
+  async calcPath(id) {
     const request = await fetch(`/api/path/${id}`);
     
     if(!request.ok) return;
@@ -152,27 +139,30 @@ class App {
     for(let i = 0; i < persons.length; i++) {
       const p = persons[i];
 
-      const li = document.createElement('li');
-      li.classList.add("infos");
-      li.innerHTML = `
-        <p class="position">
-          ${(i+1)}.
-        </p>
-        <div class="name">
-          <p>
-            ${p.name}
-          </p>
-        </div>
-        <p>
-          ${this.formatImportance(p.importance)}
-        </p>
-      `;
+      const content = document.createElement("div");
+      content.style.display = "contents";
 
-      li.addEventListener("click", (event) => {
-        this.calcPath(event, p.id);
-      })
+      const pos_span = document.createElement("span");
+      const name_span = document.createElement("span");
+      const imp_span = document.createElement("span");
+      
+      name_span.classList.add("p-name");
+      imp_span.style.textAlign = "right";
+      pos_span.style.textAlign = "right";
 
-      nav_persons.appendChild(li);
+      pos_span.innerText = `${(i + 1)}.`;
+      name_span.innerText = p.name;
+      imp_span.innerText = this.formatImportance(p.importance);
+
+      content.appendChild(pos_span);
+      content.appendChild(name_span);
+      content.appendChild(imp_span);
+
+      content.addEventListener('click', (evt) => {
+        this.calcPath(p.id);
+      });
+
+      rank_persons.appendChild(content);
 
     }
   }
@@ -184,17 +174,16 @@ class App {
   }
 
   drawNode(x, y, p) {
-    let strokeColor = this.nodeColor;
+    let fillColor = this.nodeColor;
     if(p.path) {
-      strokeColor = this.pathColor;
+      fillColor = this.pathColor;
     }
 
     ctx.beginPath();
     ctx.arc(x, y, this.nodeRadius, 0, 2 * Math.PI);
-    ctx.fillStyle = this.nodeColor;
+    ctx.fillStyle = fillColor;
     const lineWidth = ctx.lineWidth;
-    ctx.lineWidth = this.nodeRadius / 6;
-    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = this.nodeRadius / 10;
     ctx.fill(); 
     ctx.stroke()
     ctx.closePath();
@@ -202,13 +191,6 @@ class App {
     ctx.lineWidth = lineWidth;
     
     if (!p.name && !p.importance) return; 
-
-    ctx.fillStyle = "#000"
-    const imp = this.formatImportance(p.importance);
-    const label = `${p.name} - ${imp}`;
-    const textSize = ctx.measureText(label).width;
-    ctx.font = `${this.nodeRadius / 2}px "Verdana"`
-    ctx.fillText(label, x - (textSize / 2), y + this.nodeRadius * 1.5);
   }
 
   drawNodes() {
@@ -217,6 +199,25 @@ class App {
       this.drawNode(pos.x , pos.y, person);
     }
   }
+
+  drawNodesLabels() {
+    for(const person of this.graph) {
+      if(!person.name && !person.importance) continue;
+      
+      const pos = person.position;
+      this.drawNodeLabel(pos.x , pos.y, person);
+    }
+  }
+
+  drawNodeLabel(x, y, p) {
+    ctx.fillStyle = "#000"
+    const imp = this.formatImportance(p.importance);
+    const label = `${p.name} - ${imp}`;
+    const textSize = ctx.measureText(label).width;
+    ctx.font = `${this.nodeRadius / 2}px "Verdana"`
+    ctx.fillText(label, x - (textSize / 2), y + this.nodeRadius * 1.5);
+  }
+
 
   drawConnection(x0, y0, x1, y1, conn) {
     let color = "#000"
@@ -248,6 +249,7 @@ class App {
 
     this.drawConnections();
     this.drawNodes();
+    this.drawNodesLabels();
 
     requestAnimationFrame(() => this.update());
   }
@@ -258,9 +260,7 @@ window.onload = async () => {
   const connections_request = await fetch(`/api/connections`);
 
   if (graph_request.ok && connections_request.ok) {
-    
     const g_data = await graph_request.json();
-
     const c_data = await connections_request.json();
 
     const app = new App(g_data, c_data);
