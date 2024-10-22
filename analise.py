@@ -30,15 +30,15 @@ def main():
 
         curr_x = (expected_pos - 1) / (len(expected_rank) - 1)
         x.append(curr_x)
-        print(score)
         y.append(score)
 
-    x.sort()
-    avg_precision = sum(y) / len(y)
-    print(avg_precision)
+        score *= 100
+        print(f"{p.name}: {score:.4f}%")
 
-    i = np.trapz(y, x)
-    print(f"Área: {i:.4f}")
+    x.sort()
+
+    i = np.trapezoid(y, x) * 100
+    print(f"Área: {i:.4f}%")
 
     plt.plot(x, y)
     plt.axis((0, 1, 0, 1))

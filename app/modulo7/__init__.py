@@ -129,7 +129,7 @@ class Modulo7:
             return None
         
         path = self.calculaCaminho(person.up_id, person.importance)
-        return path;
+        return path
 
     def draw_graph(self, path: List[List[str]]):
         persons = UP.getAll()
@@ -174,6 +174,8 @@ class Modulo7:
         for person in self.persons:
             graph.add_node(person.up_id)
 
+        self.connections = Connection.getAll()
+
         for connection in self.connections:
             graph.add_edge(connection.id_person_a, connection.id_person_b)
 
@@ -181,6 +183,8 @@ class Modulo7:
         iterations = round(3 / 4 * len(self.persons)) * 10
         print("k = " + str(k))
         print("iterations = " + str(iterations))
+
+        print(self.connections)
 
         pos = nx.spring_layout(graph, scale=1, seed=self.connections[0].id_graph % 1000)
 

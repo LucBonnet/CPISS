@@ -114,7 +114,7 @@ class App {
       
       if (lastPerson == null) {
         lastPerson = id;
-        await new Promise(resolve => setTimeout(resolve, 750 / data.length));
+        // await new Promise(resolve => setTimeout(resolve, 750 / data.length));
         continue;
       }
       
@@ -125,7 +125,7 @@ class App {
         }
       }
 
-      await new Promise(resolve => setTimeout(resolve, 750 / data.length));
+      // await new Promise(resolve => setTimeout(resolve, 750 / data.length));
       
       lastPerson = id;
     }
@@ -178,6 +178,8 @@ class App {
     if(p.path) {
       fillColor = this.pathColor;
     }
+
+    ctx.strokeStyle = "#000";
 
     ctx.beginPath();
     ctx.arc(x, y, this.nodeRadius, 0, 2 * Math.PI);
