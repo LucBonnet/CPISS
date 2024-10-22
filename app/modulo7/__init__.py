@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-import webbrowser
+from typing import List
 import queue
 import math
 
@@ -131,7 +131,7 @@ class Modulo7:
         path = self.calculaCaminho(person.up_id, person.importance)
         return path;
 
-    def draw_graph(self, path: list[list[str]]):
+    def draw_graph(self, path: List[List[str]]):
         persons = UP.getAll()
 
         labels = {}

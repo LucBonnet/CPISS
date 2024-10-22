@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 import math
 
 from app.main import App
@@ -25,18 +26,22 @@ def main():
 
         deviation = math.fabs(expected_pos - rank_pos)
 
-        score = 1 - (deviation / len(rank))
+        score = 1 - (deviation / (len(rank) - 1))
 
-        x.append(expected_pos)
+        curr_x = (expected_pos - 1) / (len(expected_rank) - 1)
+        x.append(curr_x)
+        print(score)
         y.append(score)
 
     x.sort()
-
     avg_precision = sum(y) / len(y)
     print(avg_precision)
 
+    i = np.trapz(y, x)
+    print(f"Área: {i:.4f}")
+
     plt.plot(x, y)
-    plt.axis((1, len(expected_rank), 0, 1))
+    plt.axis((0, 1, 0, 1))
     plt.show()
 
 

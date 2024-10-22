@@ -210,11 +210,17 @@ class App {
   }
 
   drawNodeLabel(x, y, p) {
-    ctx.fillStyle = "#000"
+    let fillColor = "#000";
+    let bold = "";
+    if(p.path) {
+      fillColor = this.pathColor;
+      bold = "bold";
+    }
+    ctx.fillStyle = fillColor
     const imp = this.formatImportance(p.importance);
     const label = `${p.name} - ${imp}`;
     const textSize = ctx.measureText(label).width;
-    ctx.font = `${this.nodeRadius / 2}px "Verdana"`
+    ctx.font = `${bold} ${this.nodeRadius / 2}px "Verdana"`
     ctx.fillText(label, x - (textSize / 2), y + this.nodeRadius * 1.5);
   }
 
