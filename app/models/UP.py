@@ -209,6 +209,13 @@ class UP:
 
         return images
 
+    def update_pl(self, pl):
+        sql = "UPDATE pessoas SET nivel_participacao = ? WHERE id = ?"
+
+        db.connect()
+        db.execute(sql, (pl, self.up_id))
+        db.close()
+
     def toJSON(self):
         data = {
             "id": self.up_id,

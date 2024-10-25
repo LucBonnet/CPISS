@@ -3,7 +3,8 @@ from app.models.Graph import Graph
 
 
 class Modulo5:
-    def __init__(self):
+    def __init__(self, print_data=True):
+        self.print_data = print_data
         graphs = Graph.findByStep(5)
 
         if len(graphs) > 0:
@@ -20,8 +21,6 @@ class Modulo5:
             db.close()
 
     def combine_edges_weights(self, conn1, conn2):
-        print(conn1)
-        print(conn2)
         newWeight = max(conn1["peso"], conn2["peso"])
         newDescription = conn1["descricao"]
         if conn2["etapa"] == 2:
@@ -32,7 +31,6 @@ class Modulo5:
             "descricao": newDescription,
             "etapa": None
         }
-        print(newConnection)
         return newConnection
 
         # return (weight1 + weight2) / 2
@@ -41,26 +39,6 @@ class Modulo5:
         print("Módulo 5")
 
         result_conns = Graph.findByStepWithConnections()
-
-        print(result_conns)
-
-        # graphs = set()
-        # connections = {}
-        # for conn in result_conns:
-        #     graphs.add(conn["id_grafo"])
-        #     key = (conn["id_pessoa_a"], conn["id_pessoa_b"], conn["id_grafo"])
-        #     r_key = tuple(reversed(key))
-        #     if connections.get(key) is not None:
-        #         print(connections[key][0], conn["peso"])
-        #         new_weight = self.combine_edges_weights(connections[key][0], conn["peso"])
-        #         connections[key] = (new_weight, conn["descricao"] if conn["etapa"] == 2 else connections.get(key)[1])
-        #     elif connections.get(r_key) is not None:
-        #         new_weight = self.combine_edges_weights(connections[r_key][0], conn["peso"])
-        #         connections[r_key] = (new_weight, conn["descricao"] if conn["etapa"] == 2 else connections.get(key)[1])
-        #     else:
-        #         connections[key] = (conn["peso"], conn["descricao"])
-        #
-        #     self.updateParticipationLevel((conn["id_pessoa_a"], conn["id_pessoa_b"]))
 
         conns = {}
         graphs = set()
@@ -72,8 +50,6 @@ class Modulo5:
 
             conn1 = { "peso": conn["peso"], "descricao": conn["descricao"], "etapa": conn["etapa"] }
             if not(conns.get(key) is None):
-                print(conns.get(key))
-                print(conn)
                 conn2 = {
                     "peso": conns.get(key)["peso"],
                     "descricao": conns.get(key)["descricao"],

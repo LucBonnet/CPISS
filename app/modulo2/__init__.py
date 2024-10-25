@@ -11,6 +11,9 @@ victims_file_path = os.path.join(os.path.dirname(__file__), "vitimas.txt")
 
 
 class Modulo2:
+    def __init__(self, print_data=True) -> None:
+        self.print_data = print_data
+        
     def getDataFromFiles(self, files):
         if not files:
             return [], [], []

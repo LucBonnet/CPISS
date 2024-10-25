@@ -8,7 +8,8 @@ from app.models.UP import UP
 
 
 class Modulo3:
-    def __init__(self, file=None) -> None:
+    def __init__(self, file=None, print_data=True) -> None:
+        self.print_data = print_data
         populate_by_file(file)
         self.visited_rg = set()  # Conjunto para rastrear RGs visitados
 
@@ -73,8 +74,6 @@ class Modulo3:
 
                 if len(connections_with_person_b) == 0:
                     continue
-
-                rgs = list(map(lambda conn: conn[2], connections_with_person_b))
 
                 # Novas conexões que serão analisadas
                 connections_with_person_b = list(filter(lambda conn: conn[2] not in self.visited_rg and conn[2] not in to_visit, connections_with_person_b))

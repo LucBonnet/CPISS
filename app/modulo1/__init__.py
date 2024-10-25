@@ -17,12 +17,15 @@ USERS_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'Imagens_usuari
 
 
 class Modulo1:
-    def __init__(self):
+    def __init__(self, print_data=True):
+        self.print_data = print_data
         self.model = Inception_V3()
         self.num_of_categories = len(self.model.categories)
         self.graph_id = None
         self.users_path = None
-        print("Modelo carregado")
+
+        if self.print_data:
+            print("Modelo carregado")
 
     def get_user_images(self, user_id: str):
         try:
@@ -154,7 +157,8 @@ class Modulo1:
             db.execute(sql, (int(user.up_id), formatted_values))
             db.close()
 
-            print("Preferências do usuário " + str(user.name))
+            if self.print_data:
+                print("Preferências do usuário " + str(user.name))
 
         if len(persons) <= 1:
             return [[]]

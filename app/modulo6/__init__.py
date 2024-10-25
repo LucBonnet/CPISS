@@ -4,7 +4,8 @@ from app.models.Connection import Connection
 
 
 class Modulo6:
-    def __init__(self):
+    def __init__(self, print_data=True):
+        self.print_data = print_data
         self.omega = 0
 
     def get_nodes_degrees(self):

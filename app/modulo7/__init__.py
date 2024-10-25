@@ -14,7 +14,8 @@ from app.models.Victim import Victim
 from app.modulo7.api import App
 
 class Modulo7:
-    def __init__(self):
+    def __init__(self, print_data=True):
+        self.print_data = print_data
         self.graph = nx.Graph()
         self.Wi = 0.5
         self.Wc = 0.5
@@ -58,8 +59,9 @@ class Modulo7:
             # Se encontrou a vítima, imprime o caminho e encerra
             if id_pessoa_atual == self.victim:
                 caminho.append(id_pessoa_atual)
-                print(f"custo para encontrar a vitima: {custo_acumulado}")
-                print(f"caminho: {caminho}")
+                if self.print_data:
+                    print(f"custo para encontrar a vitima: {custo_acumulado}")
+                    print(f"caminho: {caminho}")
                 path1=caminho
                 for i in range(len(caminho)):
                     if i + 1 < len(caminho):
@@ -181,10 +183,9 @@ class Modulo7:
 
         k = len(self.persons) / 2 / math.sqrt(len(self.persons))
         iterations = round(3 / 4 * len(self.persons)) * 10
-        print("k = " + str(k))
-        print("iterations = " + str(iterations))
-
-        print(self.connections)
+        if self.print_data:
+            print("k = " + str(k))
+            print("iterations = " + str(iterations))
 
         pos = nx.spring_layout(graph, scale=1, seed=self.connections[0].id_graph % 1000)
 
@@ -214,23 +215,27 @@ class Modulo7:
 
         victim = UP.findById(id_vitima)
 
-        persons = UP.getAll()
-        for person in persons:
-            print()
-            print(person)
-            print()
+        if self.print_data:
+            persons = UP.getAll()
+            for person in persons:
+                print()
+                print(person)
+                print()
 
-        print("\nVítima:")
-        print(victim)
+        if self.print_data:
+            print("\nVítima:")
+            print(victim)
         self.victim = victim.up_id
 
         self.persons = UP.getOrderByImportance()
 
-        print("\nRanqueamento das unidades participantes:")
+        if self.print_data:
+            print("\nRanqueamento das unidades participantes:")
         rank = []
         for i, up in enumerate(self.persons):
             rank.append(up)
-            print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+            if self.print_data:
+                print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
 
         if return_rank:
             return rank
@@ -264,9 +269,10 @@ class Modulo7:
         if len(ups) == 0:
             return
 
-        print("\nRanqueamento das unidades participantes:")
-        for i, up in enumerate(ups):
-            print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+        if self.print_data:
+            print("\nRanqueamento das unidades participantes:")
+            for i, up in enumerate(ups):
+                print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
 
         # escolher qual id vc quer na lista
         pessoa_maior_importancia = ups[0]

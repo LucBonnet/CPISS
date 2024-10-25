@@ -13,6 +13,9 @@ def get_data_from_file(file_path):
 
 
 class Modulo4:
+    def __init__(self, print_data=True) -> None:
+        self.print_data = print_data
+
     def main(self, facts_file_path=None):
         print("Módulo 4")
 

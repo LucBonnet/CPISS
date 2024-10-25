@@ -27,7 +27,27 @@ class Connection():
     db.insert(sql_insert_connection, connections)
     db.close()
 
+    conns = []
+    for c in connections:
+      conn = Connection.find(c[0], c[1], c[4])
+      conns += conn
+
+    return conns
+
+  @staticmethod
+  def find(id_p_a, id_p_b, graph_id):
+    sql = "SELECT * FROM conexoes WHERE ((id_pessoa_a = ? AND id_pessoa_b = ?) OR (id_pessoa_a = ? AND id_pessoa_b = ?)) AND id_grafo = ?"
+
+    db.connect()
+    result = db.execute(sql, (id_p_a, id_p_b, id_p_b, id_p_a, graph_id))
+    db.close()
+
+    connections = []
+    for conn in result:
+      connections.append(Connection(*conn))
+
     return connections
+
   
   def getAll():
     connections: list[Connection] = []
@@ -53,6 +73,19 @@ class Connection():
         connections.append(Connection(*conn))
     
     return connections
+
+  def delete(self):
+    sql = "DELETE FROM conexoes WHERE id = ?"
+    db.connect()
+    db.execute(sql, (self.conn_id, ))
+    db.close()
+
+  @staticmethod
+  def delete_ruido():
+    sql = "DELETE FROM conexoes WHERE descricao = 'Ruído'"
+    db.connect()
+    db.execute(sql)
+    db.close()
 
   def toJSON(self):
     data = {
