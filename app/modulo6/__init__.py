@@ -95,7 +95,9 @@ class Modulo6:
     def main(self):
         print("Módulo 6")
         self.__set_omega()
+        print("Omega calcluado")
         self.__set_np()
+        print("Níveis de participação atualizados")
 
         sql = "SELECT id FROM pessoas ORDER BY id"
         db.connect()
@@ -135,3 +137,5 @@ class Modulo6:
             db.connect()
             db.execute(sql, (importance, up_id))
             db.close()
+
+        print("Atualização das importâncias")

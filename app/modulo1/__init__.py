@@ -62,8 +62,8 @@ class Modulo1:
 
     def set_divergence(self, user_a_id, user_b_id, divergence):
         db.connect()
-        sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, peso, id_grafo) VALUES (?,?,?,?)"
-        db.insert(sql, (user_a_id, user_b_id, divergence, self.graph_id))
+        sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?)"
+        db.insert(sql, (user_a_id, user_b_id, "Preferências semelhantes", divergence, self.graph_id))
         db.close()
 
     def compare_preferences(self):

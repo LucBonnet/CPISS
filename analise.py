@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import random as rdn
 import numpy as np
 import math
 
@@ -6,6 +7,9 @@ from app.main import App
 from app.models.Connection import Connection
 from app.models.Graph import Graph
 from app.models.UP import UP
+
+from app.database.create_database import create as create_database
+from app.utils.argsParser import args_parser
 
 def calc_auc(current_rank, expected_rank):
     x = []
@@ -49,8 +53,20 @@ def create_matrix(id_persons):
 
     return conns
 
+def write_file_with_rank(rank, num_conns, total, step, total_steps):
+    file = open("./rank.txt", "w", encoding="utf-8")
+    file.write(f"Conexões novas => {num_conns} / {total}\n")
+    file.write(f"Etapa => {step} / {total_steps}\n")
+    for rank_p in rank:
+        file.write(f"{rank_p.name} - {rank_p.importance}\n")
+    file.close()
 
 def main():
+    args = args_parser()
+
+    reset_database = args.get("r")
+    create_database(reset_database)
+
     expected_rank = ['456573409', '419976309', '288410774']
 
     app = App("FeraDaPenha")
@@ -74,39 +90,41 @@ def main():
                 lista.append([id_persons[i], id_persons[j]])
 
     # lista = lista[:10]
-    print(lista)
+    print(len(lista))
 
     areas = []
 
-    for k in range(1,len(lista) + 1):
-        for i in range(0, len(lista)):
+    times = 100
+    connection_weight = 1
+    for i in range(1, len(lista) + 1):
+        # i -> Define quantas conexões serão adicionadas
+        for j in range(times):
+            # j ->  Define a combinação testada
+
+            # Seleciona i elementos da "lista" sem repetição
+            list_to_test = rdn.sample(lista, i)
+
             conns = []
-            for j in range(i, i+k):
-                if i+k > len(lista):
-                    continue
-                print(lista[j], end="")
-                ps = lista[j]
+            for conn in list_to_test:
+                # Criar as conexões no banco de dados
                 graph = Graph.create(2)
-                new_conns = Connection.create((ps[0], ps[1], "Ruído", 1, graph))
+                new_conns = Connection.create((conn[0], conn[1], "Ruído", connection_weight, graph))
                 conns = conns + new_conns
 
-            if len(conns) == 0:
-                continue
-
             rank = app.execute(return_rank=True)
-            file = open("./rank.txt", "w", encoding="utf-8")
-            for rank_p in rank:
-                file.write(f"{rank_p.name} - {rank_p.importance}\n")
-            file.close()
+            write_file_with_rank(rank, i, len(lista), j, times)
+
             area = calc_auc(rank, expected_rank)
             areas.append(area)
             print(area)
-            
+
+            # Deleta as conexões com descrição "Ruído"
             Connection.delete_ruido()
+            # Reseta o nível de participação de todas as pessoas
             for p in persons:
                 p.update_pl(p.participation_level)
 
-            print()
+        print(i)
 
     print(areas)
     avg = sum(areas) / len(areas)

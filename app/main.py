@@ -1,4 +1,4 @@
-# from app.modulo1 import Modulo1
+from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
 from app.modulo4 import Modulo4
@@ -13,7 +13,7 @@ class App:
         self.print_data = print_data
         self.files = getTestFiles(test)
 
-        # self.m1 = Modulo1(print_data)
+        self.m1 = Modulo1(print_data)
         self.m2 = Modulo2(print_data)
         self.m3 = Modulo3(self.files.get("police-database"), print_data)
         self.m4 = Modulo4(print_data)
@@ -25,7 +25,7 @@ class App:
         if not self.files:
             persons = self.m2.main()
             self.m3.main([p.document for p in persons])
-            # self.m1.main()
+            self.m1.main()
             self.m4.main()
             self.m5.main()
             self.m6.main()
@@ -45,7 +45,7 @@ class App:
 
             persons = self.m2.main(m2_files)
             self.m3.main([p.document for p in persons])
-            # self.m1.main(step["users_images"])
+            self.m1.main(step["users_images"])
             facts_values_file = step.get("fatos")
             self.m4.main(facts_values_file)
 
