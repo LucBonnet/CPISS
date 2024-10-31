@@ -64,3 +64,10 @@ class Graph:
             graphs.append(graph_data)
 
         return graphs
+
+    @staticmethod
+    def delete_by_id(graph_id):
+        sql = "DELETE FROM grafos WHERE id = ?"
+        db.connect()
+        db.execute(sql, (graph_id,))
+        db.close()

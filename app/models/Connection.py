@@ -9,6 +9,13 @@ class Connection():
     self.weight = weight
     self.id_graph = id_graph
 
+  def __repr__(self) -> str:
+    return self.__str__()
+
+  def __str__(self) -> str:
+    return f"{self.conn_id} -> ({self.id_person_a}, {self.id_person_b}) - {self.description}\n"
+
+
   def create(connectionData):
     sql_insert_connection = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
     

@@ -7,6 +7,7 @@ from app.main import App
 from app.models.Connection import Connection
 from app.models.Graph import Graph
 from app.models.UP import UP
+from app.models.Case import Case
 
 from app.database.create_database import create as create_database
 from app.utils.argsParser import args_parser
@@ -75,8 +76,10 @@ def main():
     area = calc_auc(rank, expected_rank)
     print("Área inicial:", area)
 
+    app.current_state.get_state()
+
     persons = UP.getAll()
-    id_persons = [p.up_id for p in persons]
+    id_persons = [p.up_id for p in app.current_state.persons]
 
     conns = create_matrix(id_persons)
 
@@ -89,14 +92,14 @@ def main():
             if not conns[i][j]:
                 lista.append([id_persons[i], id_persons[j]])
 
-    # lista = lista[:10]
+    lista = lista[:2]
     print(len(lista))
 
     areas = []
 
     times = 100
     connection_weight = 1
-    for i in range(1, len(lista) + 1):
+    for i in range(1, len(lista)):
         # i -> Define quantas conexões serão adicionadas
         for j in range(times):
             # j ->  Define a combinação testada
@@ -104,14 +107,14 @@ def main():
             # Seleciona i elementos da "lista" sem repetição
             list_to_test = rdn.sample(lista, i)
 
-            conns = []
-            for conn in list_to_test:
-                # Criar as conexões no banco de dados
-                graph = Graph.create(2)
-                new_conns = Connection.create((conn[0], conn[1], "Ruído", connection_weight, graph))
-                conns = conns + new_conns
+            # conns = []
+            # for conn in list_to_test:
+            #     # Criar as conexões no banco de dados
+            #     graph = Graph.create(2)
+            #     new_conns = Connection.create((conn[0], conn[1], "Ruído", connection_weight, graph))
+            #     conns = conns + new_conns
 
-            rank = app.execute(return_rank=True)
+            rank = app.add_connections_to_test(list_to_test)
             write_file_with_rank(rank, i, len(lista), j, times)
 
             area = calc_auc(rank, expected_rank)
@@ -119,10 +122,10 @@ def main():
             print(area)
 
             # Deleta as conexões com descrição "Ruído"
-            Connection.delete_ruido()
+            # Connection.delete_ruido()
             # Reseta o nível de participação de todas as pessoas
-            for p in persons:
-                p.update_pl(p.participation_level)
+            # for p in persons:
+            #     p.update_pl(p.participation_level)
 
         print(i)
 

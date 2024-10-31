@@ -7,11 +7,17 @@ from app.modulo6 import Modulo6
 from app.modulo7 import Modulo7
 
 from app.utils.getArgs import getTestFiles
+from app.utils.randomId import generateRandomId
+
+from app.models.Case import Case
+from app.models.Connection import Connection
 
 class App:
     def __init__(self, test=None, print_data=False):
         self.print_data = print_data
         self.files = getTestFiles(test)
+
+        self.current_state = Case()
 
         self.m1 = Modulo1(print_data)
         self.m2 = Modulo2(print_data)
@@ -54,3 +60,23 @@ class App:
         rank = self.m7.main(return_rank=return_rank)
         if rank:
             return rank
+
+    def add_connections_to_test(self, up_ids):
+        conn_weight = 1
+        conn_desc = "Ruído"
+
+        conns: list[Connection] = []
+        for i, conn in enumerate(up_ids):
+            conn_id = len(self.current_state.connections) + i + 1
+            id_p_a = conn[0]
+            id_p_b = conn[1]
+            graph_id = generateRandomId()
+            new_conn = Connection(conn_id, id_p_a, id_p_b, conn_desc, conn_weight, graph_id)
+            conns.append(new_conn)
+
+        updated_persons, new_conns = self.m5.test(self.current_state, conns)
+        updated_persons = self.m6.test(updated_persons, new_conns)
+        # rank = self.m7.test(updated_persons)
+
+
+        return []

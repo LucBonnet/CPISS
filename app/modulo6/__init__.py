@@ -8,9 +8,8 @@ class Modulo6:
         self.print_data = print_data
         self.omega = 0
 
-    def get_nodes_degrees(self):
+    def get_nodes_degrees(self, connections: list[Connection]):
         degrees = {}
-        connections = Connection.getAll()
 
         for conn in connections:
             if degrees.get(conn.id_person_a) is None:
@@ -35,13 +34,14 @@ class Modulo6:
         avg_degrees = degrees_sum / len(degrees)
         return 1 - (avg_degrees / (max_degree * 1.1))
 
-    def __set_omega(self):
-        degrees = self.get_nodes_degrees()
+    def __set_omega(self, connections: list[Connection]):
+        degrees = self.get_nodes_degrees(connections)
         values = list(degrees.values())
 
         if len(values) > 0:
             self.omega = self.__calc_omega(values)
             print(f"w = {self.omega}")
+        return self.omega
 
     def __update_np(self, ups_ids, ups_np, max_np):
         sql = "UPDATE pessoas SET np_formatado = ? WHERE id = ?"
@@ -94,7 +94,8 @@ class Modulo6:
 
     def main(self):
         print("Módulo 6")
-        self.__set_omega()
+        connections = Connection.getAll()
+        self.__set_omega(connections)
         print("Omega calcluado")
         self.__set_np()
         print("Níveis de participação atualizados")
@@ -139,3 +140,6 @@ class Modulo6:
             db.close()
 
         print("Atualização das importâncias")
+
+    def test(self, connections):
+        omega = self.__set_omega(connections)
