@@ -11,7 +11,7 @@ def main():
     create_database(reset_database)
 
     app = App(args.get("t"))
-    rank = app.execute(return_rank=True)
+    rank = app.execute(return_rank=False)
     print(rank)
 
 if __name__ == "__main__":

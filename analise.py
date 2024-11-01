@@ -95,7 +95,7 @@ def main():
 
     areas = []
 
-    times = 100
+    times = 1000
     for i in range(1, len(lista) + 1):
         # i -> Define quantas conexões serão adicionadas
         for j in range(times):
