@@ -40,7 +40,8 @@ class Modulo6:
 
         if len(values) > 0:
             self.omega = self.__calc_omega(values)
-            print(f"w = {self.omega}")
+            if self.print_data:
+                print(f"w = {self.omega}")
         return self.omega
 
     def __update_np(self, ups_ids, ups_np, max_np):
@@ -141,5 +142,19 @@ class Modulo6:
 
         print("Atualização das importâncias")
 
-    def test(self, connections):
-        omega = self.__set_omega(connections)
+    def test(self, persons: list[UP], connections):
+        self.__set_omega(connections)
+        pls = [p.participation_level for p in persons]
+        max_pl = max(pls)
+
+        for p in persons:
+            p.formatted_pl = self.__calc_np(p.participation_level, max_pl)
+            facts = p.facts + [p.formatted_pl]
+            p.importance = self.__p(facts)
+        
+        return persons
+
+        
+                
+
+        

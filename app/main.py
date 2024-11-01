@@ -1,3 +1,5 @@
+import copy
+
 from app.modulo1 import Modulo1
 from app.modulo2 import Modulo2
 from app.modulo3 import Modulo3
@@ -11,6 +13,7 @@ from app.utils.randomId import generateRandomId
 
 from app.models.Case import Case
 from app.models.Connection import Connection
+from app.models.UP import UP
 
 class App:
     def __init__(self, test=None, print_data=False):
@@ -62,21 +65,24 @@ class App:
             return rank
 
     def add_connections_to_test(self, up_ids):
+        persons: list[UP] = copy.deepcopy(self.current_state.persons)
+        original_conns: list[Connection] = copy.deepcopy(self.current_state.connections)
+
         conn_weight = 1
         conn_desc = "Ruído"
 
-        conns: list[Connection] = []
+        conns_to_add: list[Connection] = []
         for i, conn in enumerate(up_ids):
             conn_id = len(self.current_state.connections) + i + 1
             id_p_a = conn[0]
             id_p_b = conn[1]
             graph_id = generateRandomId()
             new_conn = Connection(conn_id, id_p_a, id_p_b, conn_desc, conn_weight, graph_id)
-            conns.append(new_conn)
+            conns_to_add.append(new_conn)
 
-        updated_persons, new_conns = self.m5.test(self.current_state, conns)
-        updated_persons = self.m6.test(updated_persons, new_conns)
-        # rank = self.m7.test(updated_persons)
+        updated_persons, new_conns = self.m5.test(persons, original_conns, conns_to_add)
+        total_conns = new_conns + original_conns
+        updated_persons = self.m6.test(updated_persons, total_conns)
+        rank = self.m7.get_rank(updated_persons)
 
-
-        return []
+        return rank

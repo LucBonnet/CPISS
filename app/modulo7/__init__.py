@@ -280,3 +280,7 @@ class Modulo7:
         path = self.calculaCaminho(id_vitima, pessoa_maior_importancia.up_id, pessoa_maior_importancia.importance)
 
         self.draw_graph(path)
+
+    def get_rank(self, persons: list[UP]):
+        persons = list(sorted(persons, key=lambda p: p.importance, reverse=True))
+        return persons

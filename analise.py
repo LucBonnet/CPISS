@@ -77,8 +77,6 @@ def main():
     print("Área inicial:", area)
 
     app.current_state.get_state()
-
-    persons = UP.getAll()
     id_persons = [p.up_id for p in app.current_state.persons]
 
     conns = create_matrix(id_persons)
@@ -92,14 +90,13 @@ def main():
             if not conns[i][j]:
                 lista.append([id_persons[i], id_persons[j]])
 
-    lista = lista[:2]
+    # lista = lista[:2]
     print(len(lista))
 
     areas = []
 
     times = 100
-    connection_weight = 1
-    for i in range(1, len(lista)):
+    for i in range(1, len(lista) + 1):
         # i -> Define quantas conexões serão adicionadas
         for j in range(times):
             # j ->  Define a combinação testada

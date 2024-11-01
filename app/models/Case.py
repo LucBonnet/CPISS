@@ -7,5 +7,5 @@ class Case:
     self.connections: list[Connection] = []
 
   def get_state(self):
-    self.persons = UP.getAll()
+    self.persons = UP.getAllWithFacts()
     self.connections = Connection.getAll()

@@ -159,6 +159,32 @@ class UP:
 
         return persons
 
+    @staticmethod
+    def getAllWithFacts():
+        persons = {}
+
+        sql = "SELECT * FROM pessoas as p LEFT JOIN pessoa_fato as pf ON p.id = pf.id_pessoa LEFT JOIN fatos AS f on f.id = pf.id_fato"
+
+        db.connect()
+        result = db.execute(sql)
+        db.close()
+
+        if len(result) == 0:
+            return persons
+
+        for data in result:
+            current_person = persons.get(data[0])
+            if current_person is None:
+                person = UP(data[0], data[1], data[2], data[3], data[4], data[5])
+                if data[10] is not None:
+                    person.addFact(data[10])
+                persons[data[0]] = person
+            else:
+                if data[10] is not None:
+                    persons.get(data[0]).addFact(data[10])
+
+        return [data for key, data in persons.items()]
+
     def findDifferenceImages(self, images: List[str]):
         sql = "SELECT * FROM imagens_usuarios WHERE id_pessoa = ?"
 

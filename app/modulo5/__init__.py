@@ -1,3 +1,5 @@
+import copy
+
 from app.database.database import db
 from app.models.Graph import Graph
 from app.models.Connection import Connection
@@ -98,10 +100,9 @@ class Modulo5:
 
         return connections_ids
 
-    def test(self, current_state: Case, connections: list[Connection]):
-        persons = current_state.persons
+    def test(self, persons, original_conns, conns_to_add: list[Connection]):
         result_conns = []
-        for conn in connections:
+        for conn in conns_to_add:
             data = {
                 "id_grafo": conn.id_graph,
                 "etapa": 2,
@@ -125,10 +126,7 @@ class Modulo5:
                 continue
 
             id_p_a, id_p_b = key
-            conn = Connection(len(current_state.connections) + i + 1, id_p_a, id_p_b, data["descricao"], data["peso"], graph_id)
+            conn = Connection(len(original_conns) + i + 1, id_p_a, id_p_b, data["descricao"], data["peso"], graph_id)
             conns.append(conn)
-
-        print(persons)
-        print(conns)
 
         return persons, conns
