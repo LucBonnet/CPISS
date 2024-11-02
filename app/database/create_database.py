@@ -70,6 +70,21 @@ def create(reset=False):
     db.execute(sql)
 
     sql = """
+        CREATE TABLE IF NOT EXISTS conexoes_finais (
+            id integer PRIMARY KEY AUTOINCREMENT,
+            id_pessoa_A integer,
+            id_pessoa_B integer,
+            descricao text,
+            peso float default 1,
+            FOREIGN KEY (id_pessoa_A) REFERENCES pessoas(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_pessoa_B) REFERENCES pessoas(id) ON DELETE CASCADE,
+            UNIQUE (id_pessoa_A, id_pessoa_B)
+        );
+    """
+
+    db.execute(sql)
+
+    sql = """
         CREATE TABLE IF NOT EXISTS preferencias (
             id_pessoa integer primary key,
             valores text,

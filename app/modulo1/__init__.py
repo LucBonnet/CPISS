@@ -9,6 +9,7 @@ from Imagens_usuarios.createDataset import person
 from app.database.database import db
 from app.modulo1.Inception_V3 import Inception_V3
 
+from app.models.Connection import Connection
 from app.models.Graph import Graph
 from app.models.UP import UP
 
@@ -61,12 +62,19 @@ class Modulo1:
         return Dkl
 
     def set_divergence(self, user_a_id, user_b_id, divergence):
-        conn_desc = "Preferências semelhantes"
-        db.connect()
-        sql = f"INSERT OR REPLACE INTO conexoes (id_pessoa_A, id_pessoa_B, descricao, peso, id_grafo) VALUES (?,?,?,?,?)"
-        db.insert(sql, (user_a_id, user_b_id, conn_desc, divergence, self.graph_id))
-        db.close()
+        conn = Connection.find_by_persons_and_step(user_a_id, user_b_id, 1)
 
+        if conn is not None:
+            sql = "UPDATE conexoes SET peso = ? WHERE id = ?"
+            db.connect()
+            db.insert(sql, (divergence, conn.conn_id))
+            db.close()
+            return
+
+        self.graph_id = Graph.create(1)
+        conn_desc = "Preferências semelhantes"
+        Connection.create((user_a_id, user_b_id, conn_desc, divergence, self.graph_id))
+        
     def compare_preferences(self):
         db.connect()
         sql = f"SELECT * FROM preferencias"

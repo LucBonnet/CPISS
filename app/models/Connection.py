@@ -1,13 +1,14 @@
 from app.database.database import db
 
 class Connection():
-  def __init__(self, conn_id, id_person_a, id_person_b, description, weight, id_graph):
+  def __init__(self, conn_id, id_person_a, id_person_b, description, weight, id_graph, step=None):
     self.conn_id = conn_id
     self.id_person_a = id_person_a
     self.id_person_b = id_person_b
     self.description = description
     self.weight = weight
     self.id_graph = id_graph
+    self.step = step
 
   def __repr__(self) -> str:
     return self.__str__()
@@ -22,10 +23,13 @@ class Connection():
     connections = []
     if type(connectionData) is list:
       for conn in connectionData:
+        if conn[3] == 0:
+          continue
         connections.append(conn) 
         
     elif type(connectionData) is tuple:
-      connections.append(connectionData)
+      if connectionData[3] != 0:
+        connections.append(connectionData)
 
     else: 
       return []
@@ -43,7 +47,7 @@ class Connection():
 
   @staticmethod
   def find(id_p_a, id_p_b, graph_id):
-    sql = "SELECT * FROM conexoes WHERE ((id_pessoa_a = ? AND id_pessoa_b = ?) OR (id_pessoa_a = ? AND id_pessoa_b = ?)) AND id_grafo = ?"
+    sql = "SELECT c.id, c.id_pessoa_A, c.id_pessoa_B, c.descricao, c.peso, c.id_grafo, g.etapa FROM conexoes AS c INNER JOIN grafos AS g on c.id_grafo = g.id WHERE ((id_pessoa_a = ? AND id_pessoa_b = ?) OR (id_pessoa_a = ? AND id_pessoa_b = ?)) AND id_grafo = ?"
 
     db.connect()
     result = db.execute(sql, (id_p_a, id_p_b, id_p_b, id_p_a, graph_id))
@@ -55,7 +59,21 @@ class Connection():
 
     return connections
 
-  
+  @staticmethod
+  def find_by_persons_and_step(id_p_a, id_p_b, step):
+    sql = "SELECT c.id, c.id_pessoa_A, c.id_pessoa_B, c.descricao, c.peso, c.id_grafo, g.etapa FROM conexoes AS c INNER JOIN grafos AS g on c.id_grafo = g.id WHERE ((id_pessoa_a = ? AND id_pessoa_b = ?) OR (id_pessoa_a = ? AND id_pessoa_b = ?)) AND g.etapa = ?"
+
+    db.connect()
+    result = db.execute(sql, (id_p_a, id_p_b, id_p_b, id_p_a, step))
+    db.close()
+
+    if len(result) == 0:
+      return None
+
+    data = result[0]
+    return Connection(*data)
+
+  @staticmethod
   def getAll():
     connections: list[Connection] = []
     sql = "SELECT max(id) FROM conexoes"
@@ -68,7 +86,7 @@ class Connection():
     if max_id == None:
       return connections
     
-    sql = "SELECT * FROM conexoes WHERE id >= ? AND id < ?"
+    sql = "SELECT c.id, c.id_pessoa_A, c.id_pessoa_B, c.descricao, c.peso, c.id_grafo, g.etapa FROM conexoes AS c INNER JOIN grafos AS g on c.id_grafo = g.id WHERE c.id >= ? AND c.id < ?"
     
     batch_size = 100
     for i in range(0, max_id, batch_size):
@@ -78,6 +96,24 @@ class Connection():
 
       for conn in result:
         connections.append(Connection(*conn))
+    
+    return connections
+  
+  @staticmethod
+  def get_all_unique():
+    connections: list[dict[str, str]] = []
+
+    sql = "SELECT DISTINCT id_pessoa_A, id_pessoa_B FROM conexoes"
+    db.connect()
+    result = db.execute(sql)
+    db.close()
+
+    for conn in result:
+      data = {
+        "id_person_a": conn[0],
+        "id_person_b": conn[1],
+      }
+      connections.append(data)
     
     return connections
 

@@ -19,6 +19,12 @@ class Modulo5:
 
         self.graph_id = Graph.create(5)
 
+    def setParticipationLevel(self, person_id, value):
+        sql = "UPDATE pessoas SET nivel_participacao = ? WHERE id = ?"
+        db.connect()
+        db.execute(sql, (value, person_id))
+        db.close()
+
     def updateParticipationLevel(self, person_id, value):
         sql = "UPDATE pessoas SET nivel_participacao = nivel_participacao + ? WHERE id = ?"
         db.connect()
@@ -26,21 +32,21 @@ class Modulo5:
         db.close()
 
     def combine_edges_weights(self, conn1, conn2):
-        newWeight = max(conn1["peso"], conn2["peso"])
-        newDescription = conn1["descricao"]
-        if conn2["etapa"] == 2:
-            newDescription = conn2["descricao"]
+        new_weight = max(conn1["peso"], conn2["peso"])
+        desc1 = conn1["descricao"]
+        desc2 = conn2["descricao"]
+        new_description = f"{desc1};{desc2}"
 
         newConnection = {
-            "peso": newWeight,
-            "descricao": newDescription,
+            "peso": new_weight,
+            "descricao": new_description,
             "etapa": None
         }
         return newConnection
 
         # return (weight1 + weight2) / 2
 
-    def group_connections(self, connections):
+    def group_connections1(self, connections):
         conns = {}
         graphs = set()
         persons_np = {}
@@ -77,7 +83,8 @@ class Modulo5:
 
         return persons_np, conns, graphs
 
-    def main(self):
+
+    def main1(self):
         print("Módulo 5")
 
         result_conns = Graph.findByStepWithConnections()
@@ -100,33 +107,84 @@ class Modulo5:
 
         return connections_ids
 
-    def test(self, persons, original_conns, conns_to_add: list[Connection]):
-        result_conns = []
-        for conn in conns_to_add:
-            data = {
-                "id_grafo": conn.id_graph,
-                "etapa": 2,
-                "conn_id": conn.conn_id,
-                "id_pessoa_a": conn.id_person_a,
-                "id_pessoa_b": conn.id_person_b,
-                "descricao": conn.description,
-                "peso": conn.weight,
-            }
-            result_conns.append(data)
-        
-        persons_np, new_connections, graphs = self.group_connections(result_conns)
-        for person in persons:
-            increment_np = 0 if persons_np.get(person.up_id) is None else persons_np.get(person.up_id)
-            person.setParticipationLevel(person.participation_level + increment_np)
+    def group_connections(self, connections):
+        conns = {}
+        persons_np = {}
+        for conn in connections:
+            key = (conn.id_person_a, conn.id_person_b)
+            reversed_key = (conn.id_person_b, conn.id_person_a)
 
-        graph_id = generateRandomId()
-        conns = []
-        for i, (key, data) in enumerate(new_connections.items()):
+            conn1 = { "peso": conn.weight, "descricao": conn.description, "etapa": conn.step }
+            if not(conns.get(key) is None):
+                conn2 = {
+                    "peso": conns.get(key)["peso"],
+                    "descricao": conns.get(key)["descricao"],
+                    "etapa": conns.get(key)["etapa"],
+                }
+                newConn = self.combine_edges_weights(conn1, conn2)
+                conns[key] = newConn
+            elif not(conns.get(reversed_key) is None):
+                conn2 = {
+                    "peso": conns.get(reversed_key)["peso"],
+                    "descricao": conns.get(reversed_key)["descricao"],
+                    "etapa": conns.get(reversed_key)["etapa"],
+                }
+                newConn = self.combine_edges_weights(conn1, conn2)
+                conns[reversed_key] = newConn
+            else:
+                conns[key] = conn1
+            
+            id_p_a = conn.id_person_a
+            id_p_b = conn.id_person_b
+
+            persons_np[id_p_a] = 1 if persons_np.get(id_p_a) is None else persons_np.get(id_p_a) + 1
+            persons_np[id_p_b] = 1 if persons_np.get(id_p_b) is None else persons_np.get(id_p_b) + 1
+
+        return persons_np, conns
+
+    def create_final_connections(self, connections):
+        sql = "DELETE FROM conexoes_finais"
+        db.connect()
+        db.execute(sql)
+        db.close()
+
+        for key, data in connections.items():
             if data["peso"] == 0:
                 continue
-
+            
             id_p_a, id_p_b = key
-            conn = Connection(len(original_conns) + i + 1, id_p_a, id_p_b, data["descricao"], data["peso"], graph_id)
-            conns.append(conn)
+            sql = "INSERT INTO conexoes_finais (id_pessoa_A, id_pessoa_B, descricao, peso) VALUES (?,?,?,?)"
+            db.connect()
+            db.insert(sql, (id_p_a, id_p_b, data["descricao"], data["peso"]))
+            db.close()
 
-        return persons, conns
+    def main(self):
+        print("Módulo 5")
+
+        connections = Connection.getAll()
+        
+        persons_np, conns = self.group_connections(connections)
+
+        for person_id, new_np in persons_np.items():
+            self.setParticipationLevel(person_id, new_np)
+
+        self.create_final_connections(conns)
+        
+
+    def test(self, persons, connections):        
+        persons_np, unique_conns = self.group_connections(connections)
+        
+        for person in persons:
+            person.setParticipationLevel(persons_np.get(person.up_id))
+
+        # graph_id = generateRandomId()
+        # conns = []
+        # for i, (key, data) in enumerate(new_connections.items()):
+        #     if data["peso"] == 0:
+        #         continue
+
+        #     id_p_a, id_p_b = key
+        #     conn = Connection(len(connections) + i + 1, id_p_a, id_p_b, data["descricao"], data["peso"], graph_id)
+        #     conns.append(conn)
+
+        return persons, unique_conns

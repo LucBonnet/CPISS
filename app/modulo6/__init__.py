@@ -8,19 +8,19 @@ class Modulo6:
         self.print_data = print_data
         self.omega = 0
 
-    def get_nodes_degrees(self, connections: list[Connection]):
+    def get_nodes_degrees(self, connections):
         degrees = {}
 
         for conn in connections:
-            if degrees.get(conn.id_person_a) is None:
-                degrees[conn.id_person_a] = 1
+            if degrees.get(conn["id_person_a"]) is None:
+                degrees[conn["id_person_a"]] = 1
             else:
-                degrees[conn.id_person_a] += 1
+                degrees[conn["id_person_a"]] += 1
 
-            if degrees.get(conn.id_person_b) is None:
-                degrees[conn.id_person_b] = 1
+            if degrees.get(conn["id_person_b"]) is None:
+                degrees[conn["id_person_b"]] = 1
             else:
-                degrees[conn.id_person_b] += 1
+                degrees[conn["id_person_b"]] += 1
 
         return degrees
 
@@ -30,11 +30,11 @@ class Modulo6:
     def __calc_omega(self, degrees):
         degrees_sum = sum(degrees)
         max_degree = max(degrees)
-
         avg_degrees = degrees_sum / len(degrees)
+
         return 1 - (avg_degrees / (max_degree * 1.1))
 
-    def __set_omega(self, connections: list[Connection]):
+    def __set_omega(self, connections):
         degrees = self.get_nodes_degrees(connections)
         values = list(degrees.values())
 
@@ -95,7 +95,7 @@ class Modulo6:
 
     def main(self):
         print("Módulo 6")
-        connections = Connection.getAll()
+        connections = Connection.get_all_unique()
         self.__set_omega(connections)
         print("Omega calcluado")
         self.__set_np()

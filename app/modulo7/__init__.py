@@ -81,13 +81,12 @@ class Modulo7:
             # Consulta as conexões da pessoa atual
             sql = """
                 SELECT 
-                c.id as id_conexao,
                 c."id_pessoa_A", 
                 c."id_pessoa_B", 
                 c.peso, 
                 p1.importancia as imp_p_a, 
                 p2.importancia as imp_p_b 
-                FROM conexoes as c 
+                FROM conexoes_finais as c 
                 INNER JOIN pessoas as p1 
                 on c."id_pessoa_A" = p1.id 
                 INNER JOIN pessoas as p2 
@@ -99,7 +98,7 @@ class Modulo7:
             conexoes = db.execute(sql, (id_pessoa_atual, id_pessoa_atual))
             db.close()
 
-            for (id_conexao, id_p_a, id_p_b, peso, imp_p_a, imp_p_b) in conexoes:
+            for (id_p_a, id_p_b, peso, imp_p_a, imp_p_b) in conexoes:
                 # Definir qual pessoa é o filho
                 imp_filho = imp_p_a
                 id_filho = id_p_a
@@ -231,55 +230,20 @@ class Modulo7:
 
         if self.print_data:
             print("\nRanqueamento das unidades participantes:")
-        rank = []
+        rank: list[UP] = []
         for i, up in enumerate(self.persons):
             rank.append(up)
             if self.print_data:
                 print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+        if self.print_data:
+            for p in rank:
+                path = self.calculaCaminho(p.up_id, p.importance)
+                print(path)
 
         if return_rank:
             return rank
 
         App(self)
-
-    def main2(self):
-        print("Módulo 7")
-
-        id_vitima = 0
-        victims = Victim.getAll()
-
-        if len(victims) == 0:
-            print("Vítima não encontrada")
-            return
-
-        victim = victims[0]
-        id_vitima = victim.person_id
-
-        self.victim = UP.findById(id_vitima)
-
-        persons = UP.getAll()
-        for person in persons:
-            print()
-            print(person)
-            print()
-
-        # Primeira pessoa   (Mudar o numero do limit para mudar a quantidade de ids que quer na lista de maior importancia)
-        ups = UP.getOrderByImportance()
-
-        if len(ups) == 0:
-            return
-
-        if self.print_data:
-            print("\nRanqueamento das unidades participantes:")
-            for i, up in enumerate(ups):
-                print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
-
-        # escolher qual id vc quer na lista
-        pessoa_maior_importancia = ups[0]
-
-        path = self.calculaCaminho(id_vitima, pessoa_maior_importancia.up_id, pessoa_maior_importancia.importance)
-
-        self.draw_graph(path)
 
     def get_rank(self, persons: list[UP]):
         persons = list(sorted(persons, key=lambda p: p.importance, reverse=True))

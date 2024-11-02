@@ -1,0 +1,20 @@
+Carlos - 0.7059184265136719 - 11
+Neyde - 0.4375 - 16
+Antônio - 0.41015625 - 15
+Nilza - 0.41015625 - 15
+Dona escola - 0.41015625 - 15
+Solange - 0.35546875 - 13
+Nelson - 0.328125 - 12
+Odete - 0.328125 - 12
+Tânia - 0.30078125 - 11
+Elias - 0.30078125 - 11
+Zizélia - 0.2734375 - 10
+Funcionários Matadouro - 0.24609375 - 9
+Sérgio - 0.24609375 - 9
+Murilo - 0.24609375 - 9
+Amanda - 0.19140625 - 7
+Benjamin - 0.19140625 - 7
+William - 0.19140625 - 7
+Guilherme - 0.19140625 - 7
+Cândida - 0.13671875 - 5
+Marilda - 0.13671875 - 5

@@ -77,12 +77,26 @@ class App:
             id_p_a = conn[0]
             id_p_b = conn[1]
             graph_id = generateRandomId()
-            new_conn = Connection(conn_id, id_p_a, id_p_b, conn_desc, conn_weight, graph_id)
+            new_conn = Connection(conn_id, id_p_a, id_p_b, conn_desc, conn_weight, graph_id, 2)
             conns_to_add.append(new_conn)
 
-        updated_persons, new_conns = self.m5.test(persons, original_conns, conns_to_add)
-        total_conns = new_conns + original_conns
-        updated_persons = self.m6.test(updated_persons, total_conns)
+        total_conns = conns_to_add + original_conns
+        updated_persons, unique_conns = self.m5.test(persons, total_conns)
+
+        conns = []
+        for key, data in unique_conns.items():
+            id_a, id_b = key
+            values = {
+                "id_person_a": id_a,
+                "id_person_b": id_b,
+            }
+            conns.append(values)
+        updated_persons = self.m6.test(updated_persons, conns)
         rank = self.m7.get_rank(updated_persons)
 
         return rank
+    
+    def remove_connections_to_test(self, up_ids):
+        persons: list[UP] = copy.deepcopy(self.current_state.persons)
+        original_conns: list[Connection] = copy.deepcopy(self.current_state.connections)
+        
