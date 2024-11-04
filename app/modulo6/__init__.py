@@ -25,6 +25,8 @@ class Modulo6:
         return degrees
 
     def __calc_np(self, np_value, max_np):
+        if max_np == 0:
+            return 0
         return np_value / max_np
 
     def __calc_omega(self, degrees):

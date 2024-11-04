@@ -1,20 +1,20 @@
-Carlos - 0.8057998983644119 - 9
-Neyde - 0.5584415584415585 - 14
-Nelson - 0.47866419294990725 - 12
-Antônio - 0.3988868274582561 - 10
-Nilza - 0.3988868274582561 - 10
-Tânia - 0.3988868274582561 - 10
-Solange - 0.3589981447124305 - 9
-Odete - 0.27922077922077926 - 7
-Cândida - 0.27922077922077926 - 7
-William - 0.27922077922077926 - 7
-Elias - 0.27922077922077926 - 7
-Dona escola - 0.23933209647495368 - 6
-Amanda - 0.1994434137291281 - 5
-Benjamin - 0.1994434137291281 - 5
-Guilherme - 0.1994434137291281 - 5
-Sérgio - 0.1994434137291281 - 5
-Murilo - 0.1994434137291281 - 5
-Marilda - 0.15955473098330242 - 4
-Zizélia - 0.15955473098330242 - 4
-Funcionários Matadouro - 0.11966604823747684 - 3
+Carlos - 0.14024793388429757 - 0
+Antônio - 0.0 - 0
+Nilza - 0.0 - 0
+Tânia - 0.0 - 0
+Solange - 0.0 - 0
+Amanda - 0.0 - 0
+Nelson - 0.0 - 0
+Odete - 0.0 - 0
+Dona escola - 0.0 - 0
+Neyde - 0.0 - 0
+Benjamin - 0.0 - 0
+Cândida - 0.0 - 0
+Marilda - 0.0 - 0
+William - 0.0 - 0
+Zizélia - 0.0 - 0
+Funcionários Matadouro - 0.0 - 0
+Guilherme - 0.0 - 0
+Sérgio - 0.0 - 0
+Elias - 0.0 - 0
+Murilo - 0.0 - 0

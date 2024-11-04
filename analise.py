@@ -133,18 +133,8 @@ def remove_connections(test, expected_rank):
     print("Área inicial:", area)
 
     app.current_state.get_state()
-    id_persons = [p.up_id for p in app.current_state.persons]
 
-    conns = create_matrix(id_persons)
-
-    lista = []
-    for i in range(len(conns)):
-        for j in range(i, len(conns)):
-            if i == j:
-                continue
-
-            if conns[i][j]:
-                lista.append([id_persons[i], id_persons[j]])
+    connections = app.current_state.connections
     
     areas = []
     
@@ -152,17 +142,17 @@ def remove_connections(test, expected_rank):
     x = []
 
     times = 1000
-    for i in range(1, len(lista) + 1):
-        # i -> Define quantas conexões serão adicionadas
+    for i in range(1, len(connections) + 1):
+        # i -> Define quantas conexões serão retiradas
         values = []
         for j in range(times):
             # j ->  Define a combinação testada
 
             # Seleciona i elementos da "lista" sem repetição
-            list_to_test = rdn.sample(lista, i)
+            list_to_test = rdn.sample(connections, i)
 
-            rank = app.add_connections_to_test(list_to_test)
-            write_file_with_rank(rank, i, len(lista), j, times)
+            rank = app.remove_connections_to_test(list_to_test)
+            write_file_with_rank(rank, i, len(connections), j, times)
 
             file = open(f"./tests-analise/rank-{i}-{j}.txt", "w")
             for p in rank:
@@ -201,7 +191,8 @@ def main():
     expected_rank = ['456573409', '419976309', '288410774']
 
 
-    add_connections(case_name, expected_rank)
+    # add_connections(case_name, expected_rank)
+    remove_connections(case_name, expected_rank)
     
 
     # 0.7464575283

@@ -175,16 +175,7 @@ class Modulo5:
         persons_np, unique_conns = self.group_connections(connections)
         
         for person in persons:
-            person.setParticipationLevel(persons_np.get(person.up_id))
-
-        # graph_id = generateRandomId()
-        # conns = []
-        # for i, (key, data) in enumerate(new_connections.items()):
-        #     if data["peso"] == 0:
-        #         continue
-
-        #     id_p_a, id_p_b = key
-        #     conn = Connection(len(connections) + i + 1, id_p_a, id_p_b, data["descricao"], data["peso"], graph_id)
-        #     conns.append(conn)
-
+            new_np = persons_np.get(person.up_id) if persons_np.get(person.up_id) is not None else 0
+            person.setParticipationLevel(new_np)
+            
         return persons, unique_conns
