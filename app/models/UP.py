@@ -31,7 +31,7 @@ class UP:
         return self.__str__()
 
     def __str__(self) -> str:
-        return f"Id: {self.up_id}\nNome: {self.name}\nIdentificador: {self.document}\nNível de participação: {self.participation_level}\nNível de participação [0,1]: {self.formatted_pl}\nImportância: {self.importance:.10f}"
+        return f"Id: {self.up_id}\nNome: {self.name}\nIdentificador: {self.document}\nFatos: {self.facts}\nNível de participação: {self.participation_level}\nNível de participação [0,1]: {self.formatted_pl}\nImportância: {self.importance:.10f}"
 
     @staticmethod
     def create(personData):

@@ -180,6 +180,71 @@ def remove_connections(test, expected_rank):
     plt.axis([1, len(x) + 1, 0, 1])
     plt.show()
 
+def add_person_with_facts(test, expected_rank):
+    app = App(test)
+    rank = app.execute(return_rank=True)
+
+    area = calc_auc(rank, expected_rank)
+    print("Área inicial:", area)
+
+    app.current_state.get_state()
+
+    person_to_edit = [p for p in app.current_state.persons if p.up_id == 17][0]
+
+    areas = []
+
+    num_of_facts = 10
+    num_of_facts_list = list(range(1, num_of_facts + 1))
+
+    facts_step = 0.01
+    facts_values_list = [round(value, 2) for value in list(np.arange(0, 1 + facts_step, facts_step))]
+
+    precisions = []
+
+    Z = np.zeros((len(facts_values_list), len(num_of_facts_list)))
+
+    for i in range(len(num_of_facts_list)):
+        for j in range(len(facts_values_list)):
+            fact_value = facts_values_list[j]
+            facts = [fact_value for x in range(num_of_facts_list[i])]
+
+            person_to_edit.facts = facts
+            rank = app.test(persons=app.current_state.persons)
+
+            file = open(f"./tests-analise/rank-{j}-{i}.txt", "w")
+            for p in rank:
+                file.write(f"{p.name} - {p.facts} - {p.importance} - {p.participation_level}\n")
+            file.close()
+
+            person_to_edit.facts = []
+
+            area = calc_auc(rank, expected_rank)
+            areas.append(area)
+            precisions.append(area)
+
+            Z[j, i] = area
+
+    facts_values_list = np.array(facts_values_list)
+    num_of_facts_list = np.array(num_of_facts_list)
+
+    X, Y = np.meshgrid(num_of_facts_list, facts_values_list)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(X, Y, Z, cmap='viridis')
+
+    ax.set_xlim([1, 10])  
+    ax.set_ylim([0, 1]) 
+    ax.set_zlim([0, 1])
+
+    ax.set_xlabel('Número de Fatos')
+    ax.set_ylabel('Valor dos Fatos')
+    ax.set_zlabel('Precisão')
+
+    plt.show()
+
+
+
 def main():
     case_name = "FeraDaPenha"
 
@@ -192,11 +257,9 @@ def main():
 
 
     # add_connections(case_name, expected_rank)
-    remove_connections(case_name, expected_rank)
-    
+    # remove_connections(case_name, expected_rank)
+    add_person_with_facts(case_name, expected_rank)
 
-    # 0.7464575283
-    # 0.7463966522
 
 
 if __name__ == "__main__":

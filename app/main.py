@@ -116,3 +116,23 @@ class App:
         rank = self.m7.get_rank(updated_persons)
         
         return rank
+
+    def test(self, persons: list[UP] = None, connections: list[Connection] = None):
+        if persons is None:
+            persons = copy.deepcopy(self.current_state.persons)
+        if connections is None:
+            connections = copy.deepcopy(self.current_state.connections)
+        
+        updated_persons, unique_conns = self.m5.test(persons, connections)
+        conns = []
+        for key, data in unique_conns.items():
+            id_a, id_b = key
+            values = {
+                "id_person_a": id_a,
+                "id_person_b": id_b,
+            }
+            conns.append(values)
+        updated_persons = self.m6.test(updated_persons, conns)
+        rank = self.m7.get_rank(updated_persons)
+
+        return rank
