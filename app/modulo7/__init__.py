@@ -107,12 +107,18 @@ class Modulo7:
                     id_filho = id_p_b
 
                 # Calcula novo valor acumulado para o filho com base nos pesos das conexões
-                valor = (imp_filho * self.Wi) + (peso * self.Wc)
-                valor_acumulado = custo_acumulado + valor - num_pessoas
+                # valor = (imp_filho * self.Wi) + (peso * self.Wc)
+                # valor_acumulado = custo_acumulado + valor - num_pessoas
+
+                heuristica = (imp_filho * self.Wi) + (peso * self.Wc) + custo_acumulado
+                custo = num_pessoas
+                valor = heuristica + custo
 
                 if id_filho not in ups:
                     # Coloca na fila de prioridade (-valor_acumulado para priorizar maior peso)
-                    pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, num_pessoas + 1, caminho_atualizado)))
+                    
+                    # pq.put((self.order * valor_acumulado, (id_filho, valor_acumulado, num_pessoas + 1, caminho_atualizado)))
+                    pq.put((valor, (id_filho, heuristica, num_pessoas + 1, caminho_atualizado)))
                     
         return path1
 
