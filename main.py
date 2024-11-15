@@ -13,10 +13,7 @@ def main():
     app = App(args.get("t"))
     rank = app.execute(return_rank=True)
     for p in rank:
-        print(f"{p.name} - {p.participation_level} - {p.importance}")
-
-    documents = [p.document for p in rank]
-    print(documents)
+        print(f"{p.document} - {p.name} - {p.participation_level} - {p.importance}")
 
 if __name__ == "__main__":
     main()

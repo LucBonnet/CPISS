@@ -31,7 +31,7 @@ def getTestFiles(path_name: str) -> dict:
 
     test_step_path = os.path.join(test_path, "passos")
 
-    step_files = ["conexoes.txt", "fatos.txt", "pessoas.txt"]
+    step_files = ["conexoes.txt", "fatos.txt", "pessoas.txt", "vitimas.txt"]
     steps = sorted([x[0] for x in os.listdir(test_step_path)])
 
     initialData = {}
@@ -59,7 +59,7 @@ def getTestFiles(path_name: str) -> dict:
 
     initialData["steps"] = steps_files
 
-    fixed_files = ["vitimas.txt", "police-database.json"]
+    fixed_files = ["police-database.json"]
     for file in fixed_files:
         file_path = os.path.join(test_path, file)
         if os.path.exists(file_path):

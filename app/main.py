@@ -49,7 +49,7 @@ class App:
             m2_files = {
                 "pessoas": step.get("pessoas"),
                 "conexoes": step.get("conexoes"),
-                "vitimas": self.files.get("vitimas") if i == 0 else None,
+                "vitimas": step.get("vitimas"),
             }
 
             persons = self.m2.main(m2_files)
