@@ -1,22 +1,202 @@
-Conexões novas => 36 / 36
-Etapa => 999 / 1000
-Carlos - 0.14024793388429757
-Antônio - 0.0
-Nilza - 0.0
-Tânia - 0.0
-Solange - 0.0
-Amanda - 0.0
-Nelson - 0.0
-Odete - 0.0
-Dona escola - 0.0
-Neyde - 0.0
-Benjamin - 0.0
-Cândida - 0.0
-Marilda - 0.0
-William - 0.0
-Zizélia - 0.0
-Funcionários Matadouro - 0.0
-Guilherme - 0.0
-Sérgio - 0.0
-Elias - 0.0
-Murilo - 0.0
+Conexões novas => 13358 / 17146
+Etapa => 89 / 100
+Pedro Miguel Peixoto - 0.1533368365738308
+João Miguel Fogaça - 0.15247052676267925
+Fernando da Rocha - 0.1516042169515276
+Breno Novaes - 0.1516042169515276
+Sr. Bernardo Castro - 0.15073790714037605
+Augusto Pinto - 0.15073790714037605
+Isadora Cardoso - 0.1498715973292244
+Lucca Moraes - 0.1498715973292244
+Dr. Diego Cavalcanti - 0.1498715973292244
+Isabelly Peixoto - 0.1498715973292244
+Camila Dias - 0.14900528751807285
+Sr. Breno Pereira - 0.14900528751807285
+Dra. Ana Rezende - 0.14900528751807285
+Maysa Martins - 0.14900528751807285
+Dr. João Pedro Oliveira - 0.14900528751807285
+Luiz Miguel Moraes - 0.1481389777069213
+João Campos - 0.1481389777069213
+João Porto - 0.1481389777069213
+João Gabriel da Luz - 0.1481389777069213
+Srta. Lavínia Alves - 0.1481389777069213
+Emilly da Paz - 0.1481389777069213
+Sr. Enzo Cardoso - 0.1481389777069213
+Ana Lívia Moraes - 0.1481389777069213
+Emanuella Gomes - 0.1481389777069213
+Marcos Vinicius da Conceição - 0.14727266789576965
+Theo Barros - 0.14727266789576965
+Kevin Fogaça - 0.14727266789576965
+Nicolas Araújo - 0.14727266789576965
+Sr. Antônio Peixoto - 0.14727266789576965
+Pietro da Costa - 0.14727266789576965
+Maria Eduarda Costa - 0.14727266789576965
+Leandro Lopes - 0.14727266789576965
+Juan Mendes - 0.14727266789576965
+Luiz Gustavo Nogueira - 0.1464063580846181
+Alice Martins - 0.1464063580846181
+Sra. Kamilly Alves - 0.1464063580846181
+Rodrigo Campos - 0.1464063580846181
+Amanda Gomes - 0.1464063580846181
+Agatha Gonçalves - 0.1464063580846181
+Lorena Vieira - 0.1464063580846181
+Paulo Rezende - 0.1464063580846181
+Diogo das Neves - 0.1464063580846181
+Arthur Cavalcanti - 0.1464063580846181
+Melissa da Paz - 0.1464063580846181
+Marcos Vinicius Teixeira - 0.1464063580846181
+Evelyn Oliveira - 0.1464063580846181
+Stephany Teixeira - 0.1464063580846181
+Sr. Thiago da Cruz - 0.1464063580846181
+Fernando Barros - 0.1464063580846181
+Bárbara Pereira - 0.1464063580846181
+Clara Ribeiro - 0.14554004827346656
+Letícia Novaes - 0.14554004827346656
+Murilo Ribeiro - 0.14554004827346656
+Maria Vitória Pires - 0.14554004827346656
+Dr. Samuel Teixeira - 0.14554004827346656
+Julia da Cunha - 0.14554004827346656
+Maysa da Rosa - 0.14554004827346656
+Maysa da Rosa - 0.1446737384623149
+Luana Martins - 0.1446737384623149
+Giovanna da Conceição - 0.1446737384623149
+Caio da Costa - 0.1446737384623149
+Isadora da Mata - 0.1446737384623149
+Lucas Campos - 0.1446737384623149
+Noah Cardoso - 0.1446737384623149
+Emanuelly da Mata - 0.1446737384623149
+Maria Sophia Lima - 0.1446737384623149
+Marcos Vinicius das Neves - 0.14380742865116336
+Bárbara Moraes - 0.14380742865116336
+Davi Azevedo - 0.14380742865116336
+Amanda Lopes - 0.14380742865116336
+Alexandre Moreira - 0.14380742865116336
+Gabrielly Moraes - 0.14380742865116336
+Sra. Ana Júlia Cardoso - 0.14380742865116336
+Cecília da Conceição - 0.14380742865116336
+Davi Pinto - 0.14380742865116336
+Vinicius Araújo - 0.14380742865116336
+Catarina Cavalcanti - 0.14294111884001182
+Kamilly Lopes - 0.14294111884001182
+Ana Cardoso - 0.14294111884001182
+Ana Carolina Monteiro - 0.14294111884001182
+Ana Júlia Cardoso - 0.14294111884001182
+Cauã Pires - 0.14294111884001182
+Thiago Rezende - 0.14294111884001182
+Srta. Bruna Barros - 0.14294111884001182
+Srta. Ana Luiza Fernandes - 0.14294111884001182
+Srta. Maria Vitória Cardoso - 0.14294111884001182
+João Vitor Melo - 0.14294111884001182
+Maria Clara Pinto - 0.14294111884001182
+Luiza Mendes - 0.14294111884001182
+Esther da Rosa - 0.14294111884001182
+Alice da Luz - 0.14207480902886016
+Yuri Melo - 0.14207480902886016
+Raul Azevedo - 0.14207480902886016
+Maria Vitória Almeida - 0.14207480902886016
+Vitor da Mata - 0.14207480902886016
+Dr. Fernando Teixeira - 0.14207480902886016
+Helena Gonçalves - 0.14207480902886016
+Vitória Fogaça - 0.14207480902886016
+Lorenzo Castro - 0.14120849921770862
+Eloah da Conceição - 0.14120849921770862
+Thiago Lopes - 0.14120849921770862
+Nathan da Costa - 0.14120849921770862
+Fernando Cunha - 0.14120849921770862
+Juan Carvalho - 0.14120849921770862
+Thales Santos - 0.14120849921770862
+Nicole Pires - 0.14120849921770862
+Júlia Freitas - 0.14120849921770862
+Dr. João Guilherme da Mota - 0.14120849921770862
+Mirella Souza - 0.14120849921770862
+Juliana Cardoso - 0.14034218940655696
+Emanuella da Rosa - 0.14034218940655696
+Nina Souza - 0.14034218940655696
+Cauê Sales - 0.14034218940655696
+Thomas Castro - 0.14034218940655696
+Sra. Maria Julia Campos - 0.14034218940655696
+Antônio Nunes - 0.14034218940655696
+Ana Lívia Rocha - 0.14034218940655696
+Enzo Gabriel Nascimento - 0.14034218940655696
+Sra. Ana Laura da Mota - 0.14034218940655696
+Arthur da Mota - 0.14034218940655696
+Isadora das Neves - 0.14034218940655696
+Manuela Ramos - 0.14034218940655696
+Daniela da Rosa - 0.14034218940655696
+Lavínia Martins - 0.14034218940655696
+Sr. Juan Ramos - 0.14034218940655696
+Bianca Fernandes - 0.14034218940655696
+Yago Porto - 0.14034218940655696
+Pedro Henrique Gonçalves - 0.13947587959540542
+Lavínia Vieira - 0.13947587959540542
+Camila Melo - 0.13947587959540542
+Ana Laura Araújo - 0.13947587959540542
+Rodrigo Santos - 0.13947587959540542
+Ana Peixoto - 0.13947587959540542
+Letícia Nogueira - 0.13947587959540542
+Samuel Moura - 0.13947587959540542
+Rafaela da Costa - 0.13947587959540542
+Enzo Rocha - 0.13947587959540542
+Emanuel Barros - 0.13860956978425376
+Davi Lucca da Mota - 0.13860956978425376
+Alexandre Lima - 0.13860956978425376
+Levi Campos - 0.13860956978425376
+Dra. Marcela Sales - 0.13860956978425376
+Srta. Gabrielly Viana - 0.13860956978425376
+Ana Clara da Paz - 0.13860956978425376
+Davi Luiz da Costa - 0.13860956978425376
+Emanuelly Dias - 0.13860956978425376
+Cauê Oliveira - 0.13860956978425376
+Pedro Miguel Almeida - 0.13774325997310222
+Vinicius Ramos - 0.13774325997310222
+Sr. Luiz Fernando Rezende - 0.13774325997310222
+Danilo Cardoso - 0.13774325997310222
+Luiza Almeida - 0.13774325997310222
+João Vitor Cavalcanti - 0.13774325997310222
+Maria Clara Almeida - 0.13774325997310222
+Davi Lucas Azevedo - 0.13774325997310222
+Emanuel Correia - 0.13774325997310222
+Gustavo Mendes - 0.13774325997310222
+Davi Luiz da Costa - 0.13774325997310222
+Luiz Gustavo Aragão - 0.13687695016195067
+Luiza Duarte - 0.13687695016195067
+Rodrigo Moraes - 0.13687695016195067
+Luna Cardoso - 0.13687695016195067
+Cauã Aragão - 0.13687695016195067
+Helena Nascimento - 0.13687695016195067
+Kaique Barbosa - 0.13687695016195067
+Lucca Duarte - 0.13687695016195067
+Joaquim Costela - 0.13687695016195067
+Valentina Freitas - 0.13687695016195067
+Sra. Yasmin Santos - 0.13601064035079902
+Lucas Araújo - 0.13601064035079902
+Arthur Santos - 0.13601064035079902
+Lucas Gabriel da Mata - 0.13601064035079902
+Emanuella Pires - 0.13601064035079902
+Luiz Otávio Pinto - 0.13601064035079902
+Maria Julia Gomes - 0.13514433053964747
+Dr. Erick Silveira - 0.13514433053964747
+Olivia Castro - 0.13514433053964747
+Isabel Gomes - 0.13514433053964747
+Maria Vitória Farias - 0.13514433053964747
+Cauê Freitas - 0.13514433053964747
+Pietra da Rocha - 0.13427802072849593
+Luiz Otávio da Costa - 0.13427802072849593
+Leonardo da Conceição - 0.13427802072849593
+Bárbara Campos - 0.13427802072849593
+Heloísa Gonçalves - 0.13427802072849593
+Ana Vitória Peixoto - 0.13341171091734427
+Pietro Ramos - 0.13341171091734427
+Leonardo Carvalho - 0.13341171091734427
+Luiz Miguel da Paz - 0.13254540110619273
+Stella Silva - 0.13254540110619273
+Diego Souza - 0.13167909129504118
+Camila Viana - 0.13167909129504118
+Pietro Rodrigues - 0.13167909129504118
+Manuela Moraes - 0.13167909129504118
+Sr. Marcelo da Mata - 0.13167909129504118
+Davi Luiz Carvalho - 0.13081278148388953
+Maria Silveira - 0.13081278148388953
+Thomas Aragão - 0.13081278148388953
+Dra. Cecília da Conceição - 0.12908016186158644
+Diogo Rodrigues - 0.12908016186158644

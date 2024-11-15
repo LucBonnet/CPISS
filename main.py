@@ -11,9 +11,12 @@ def main():
     create_database(reset_database)
 
     app = App(args.get("t"))
-    app.execute(return_rank=False)
-    # for p in rank:
-    #     print(f"{p.name} - {p.participation_level} - {p.importance}")
+    rank = app.execute(return_rank=True)
+    for p in rank:
+        print(f"{p.name} - {p.participation_level} - {p.importance}")
+
+    documents = [p.document for p in rank]
+    print(documents)
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,7 @@ import os
 
 from app.main import App
 from app.models.Connection import Connection
+from app.models.UP import UP
 
 from app.database.create_database import create as create_database
 from app.utils.argsParser import args_parser
@@ -52,17 +53,20 @@ def create_matrix(id_persons):
 
     return conns
 
-def write_file_with_rank(rank, num_conns, total, step, total_steps):
+def write_file_with_rank(rank: list[UP], num_conns, total, step, total_steps):
     file = open("./rank.txt", "w", encoding="utf-8")
     file.write(f"Conexões novas => {num_conns} / {total}\n")
     file.write(f"Etapa => {step} / {total_steps}\n")
     for rank_p in rank:
-        file.write(f"{rank_p.name} - {rank_p.importance}\n")
+        file.write(f"{rank_p.name} - {rank_p.importance} - {rank_p.facts} - {rank_p.participation_level}\n")
     file.close()
 
-def add_connections(test, expected_rank):
+def add_connections(test, expected_rank=None):
     app = App(test)
     rank = app.execute(return_rank=True)
+    if expected_rank is None:
+        expected_rank = [p.document for p in rank.copy()]
+        print(expected_rank)
 
     area = calc_auc(rank, expected_rank)
     print("Área inicial:", area)
@@ -82,12 +86,17 @@ def add_connections(test, expected_rank):
                 lista.append([id_persons[i], id_persons[j]])
 
     areas = []
+
+    # lista = lista[:100]
     
+    print(len(lista) + 1)
+
     y = []
     x = []
 
-    times = 1000
-    for i in range(1, len(lista) + 1):
+    times = 100
+    total = len(lista) + 1
+    for i in range(1, total):
         # i -> Define quantas conexões serão adicionadas
         values = []
         for j in range(times):
@@ -99,15 +108,15 @@ def add_connections(test, expected_rank):
             rank = app.add_connections_to_test(list_to_test)
             write_file_with_rank(rank, i, len(lista), j, times)
 
-            file = open(f"./tests-analise/rank-{i}-{j}.txt", "w")
-            for p in rank:
-                file.write(f"{p.name} - {p.importance} - {p.participation_level}\n")
-            file.close()
+            # file = open(f"./tests-analise/rank-{i}-{j}.txt", "w")
+            # for p in rank:
+            #     file.write(f"{p.name} - {p.importance} - {p.participation_level}\n")
+            # file.close()
 
             area = calc_auc(rank, expected_rank)
             values.append(area)
             areas.append(area)
-            print(i, "-", area)
+            print(f"{i}/{total}" , "-", area)
 
         avg = sum(values) / len(values) 
         y.append(avg)
@@ -116,6 +125,9 @@ def add_connections(test, expected_rank):
     print(areas)
     avg = sum(areas) / len(areas)
     print(f"\nMédia:\n{avg:.10f}")
+
+    print(x)
+    print(y)
 
     print(min(y))
     print(max(y))
@@ -243,9 +255,7 @@ def add_person_with_facts(test, expected_rank):
 
     plt.show()
 
-
-
-def main():
+def fera_da_penha():
     case_name = "FeraDaPenha"
 
     args = args_parser()
@@ -260,7 +270,20 @@ def main():
     # remove_connections(case_name, expected_rank)
     add_person_with_facts(case_name, expected_rank)
 
+def aleatorio():
+    case_name = "Aleatorio"
 
+    args = args_parser()
+
+    reset_database = args.get("r")
+    create_database(reset_database)
+
+    add_connections(case_name, None)
+    # remove_connections(case_name, expected_rank)
+    # add_person_with_facts(case_name, expected_rank)
+
+def main():
+    aleatorio()
 
 if __name__ == "__main__":
     main()

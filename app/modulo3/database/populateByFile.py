@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 
+import time
+
 from app.modulo3.database.database import db_policia
 
 
@@ -65,16 +67,28 @@ def populate_by_file(file_path: str | None):
     if len(pessoas) > 0:
         db_policia.insert(sql, pessoas)
 
+    db_policia.close()
+
+    db_policia.connect()
+
     sql = "INSERT INTO fatos (tipo,nome,descricao) VALUES (?,?,?)"
     if len(fatos) > 0:
         db_policia.insert(sql, fatos)
 
-    sql = "INSERT INTO pessoa_fato (rg_pessoa,id_fato) VALUES (?,?)"
-    if len(pessoa_fato) > 0:
-        db_policia.insert(sql, pessoa_fato)
+    db_policia.close()
+
+    db_policia.connect()
 
     sql = "INSERT INTO conexoes (rg_pessoa_a,rg_pessoa_b,descricao,peso) VALUES (?,?,?,?)"
     if len(conexoes) > 0:
         db_policia.insert(sql, conexoes)
+    
+    db_policia.close()
+
+    db_policia.connect()
+
+    sql = "INSERT INTO pessoa_fato (rg_pessoa,id_fato) VALUES (?,?)"
+    if len(pessoa_fato) > 0:
+        db_policia.insert(sql, pessoa_fato)
 
     db_policia.close()

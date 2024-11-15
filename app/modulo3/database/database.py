@@ -17,7 +17,7 @@ class Database:
     def insert(self, sql, data=None):
         cursor = self.conn.cursor()
 
-        if data != None:
+        if data is not None:
             if type(data) == list:
                 cursor.executemany(sql, data)
             else: 

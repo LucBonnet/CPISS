@@ -49,6 +49,7 @@ class Modulo2:
         pessoas_arquivo, conexoes_arquivo, vitimas_arquivo = self.getDataFromFiles(modulo2_initial_data)
 
         created_persons = UP.create(pessoas_arquivo)
+        print("Pessoas cadastradas")
 
         if len(created_persons) == 0:
             return []
@@ -67,6 +68,7 @@ class Modulo2:
             graph_id = Graph.create(2)
 
             Connection.create((person_a.up_id, person_b.up_id, description, 1, graph_id))
+            print(f"Adicionada conexão {person_a.name} - {person_b.name}")
 
         for victim in vitimas_arquivo:
             up_victim = UP.findByCode(victim)
