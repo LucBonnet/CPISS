@@ -1,0 +1,71 @@
+{
+  "pessoas": [
+    {
+      "documento": "123456789",
+      "nome": "Francisco"
+    },
+    {
+      "documento": "456789012",
+      "nome": "Diva"
+    },
+    {
+      "documento": "567890123",
+      "nome": "Pedro"
+    },
+    {
+      "documento": "122345678",
+      "nome": "Isadora"
+    }
+  ],
+  "fatos": [
+    {
+      "tipo": "1",
+      "nome": "Molestar",
+      "descricao": "Molestar"
+    },
+    {
+      "tipo": "2",
+      "nome": "Abusar",
+      "descricao": "Abusar"
+    },
+    {
+      "tipo": "3",
+      "nome": "Roubo de identidade",
+      "descricao": "Roubo de identidade"
+    }
+  ],
+  "conexoes": [
+    {
+      "doc_pessoa_a": "456789012",
+      "doc_pessoa_b": "123456789",
+      "descricao": "Diva molestou Francisco",
+      "peso": 1
+    },
+    {
+      "doc_pessoa_a": "122345678",
+      "doc_pessoa_b": "123456789",
+      "descricao": "Francisco usou um cheque no nome de Isadora",
+      "peso": 1
+    },
+    {
+      "doc_pessoa_a": "567890123",
+      "doc_pessoa_b": "123456789",
+      "descricao": "Pedro abusou de Francisco",
+      "peso": 1
+    }
+  ],
+  "pessoa_fato": [
+    {
+      "documento_pessoa": "456789012",
+      "tipo_fato": "1"
+    },
+    {
+      "documento_pessoa": "567890123",
+      "tipo_fato": "2"
+    },
+    {
+      "documento_pessoa": "123456789",
+      "tipo_fato": "3"
+    }
+  ]
+}

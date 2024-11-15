@@ -1,0 +1,14 @@
+123456789;789012345;Francisco matou Alessandra
+123456789;890123456;Francisco matou Ana
+123456789;901234567;Francisco matou Andrea
+123456789;102345678;Francisco matou Fabiana
+123456789;113456789;Francisco matou Juliana
+123456789;224567890;Francisco matou Lenita
+123456789;335678901;Francisco matou Marlene
+123456789;446789012;Francisco matou Márcia
+123456789;557890123;Francisco matou Amanda
+123456789;668901234;Francisco matou Sandra
+123456789;779012345;Francisco matou Elisângela
+123456789;880123456;Francisco matou Raquel
+123456789;991234567;Francisco matou Selma
+123456789;343456789;Francisco matou Patrícia
