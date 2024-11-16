@@ -26,12 +26,15 @@ def calc_auc(current_rank, expected_rank):
 
         score = 1 - (deviation / (len(current_rank) - 1))
 
-        curr_x = (expected_pos - 1) / (len(expected_rank) - 1)
+        curr_x = (expected_pos) / (len(expected_rank))
         x.append(curr_x)
         y.append(score)
 
     x.sort()
 
+    if len(y) == 1:
+      return y[0]
+    
     i = np.trapz(y, x)
     return i
 
@@ -281,9 +284,22 @@ def aleatorio():
     add_connections(case_name, None)
     # remove_connections(case_name, expected_rank)
     # add_person_with_facts(case_name, expected_rank)
+    
+def maniaco_do_parque():
+    case_name = "ManiacoDoParque"
+
+    args = args_parser()
+
+    reset_database = args.get("r")
+    create_database(reset_database)
+
+    expected_rank = ['123456789']
+    add_connections(case_name, expected_rank)
+    # remove_connections(case_name, expected_rank)
+    # add_person_with_facts(case_name, expected_rank)
 
 def main():
-    aleatorio()
+    maniaco_do_parque()
 
 if __name__ == "__main__":
     main()
