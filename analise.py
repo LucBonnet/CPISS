@@ -298,8 +298,20 @@ def maniaco_do_parque():
     # remove_connections(case_name, expected_rank)
     # add_person_with_facts(case_name, expected_rank)
 
+def flordelis():
+    case_name = "Flordelis"
+    args = args_parser()
+
+    reset_database = args.get("r")
+    create_database(reset_database)
+
+    expected_rank = ['371792988', '291635957', '355509805']
+    add_connections(case_name, expected_rank)
+    # remove_connections(case_name, expected_rank)
+    # add_person_with_facts(case_name, expected_rank)
+
 def main():
-    maniaco_do_parque()
+    flordelis()
 
 if __name__ == "__main__":
     main()

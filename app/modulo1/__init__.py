@@ -83,18 +83,17 @@ class Modulo1:
 
         num_of_users = len(preferences)
 
-        if num_of_users == 0:
+        if num_of_users <= 1:
             return
 
         users_divergences = np.empty((num_of_users, num_of_users), dtype=float)
         users_ids = [pref[0] for pref in preferences]
 
-        max_divergence = 0
+        max_divergence = None
         min_divergence = None
         for i in range(num_of_users):
             for j in range(i, num_of_users):
                 if i == j:
-                    min_divergence = 0
                     continue
 
                 values = preferences[i][1]
@@ -105,7 +104,7 @@ class Modulo1:
 
                 divergence = self.calc_users_divergence(userA_prefs, userB_prefs)
 
-                if divergence > max_divergence:
+                if max_divergence is None or divergence > max_divergence:
                     max_divergence = divergence
 
                 if min_divergence is None or divergence < min_divergence:
@@ -117,10 +116,17 @@ class Modulo1:
                 print(f"[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}")
 
         def normalize(value):
+            print(value)
+            print(min_divergence)
+            print(max_divergence)
+
+            if max_divergence == min_divergence:
+                return value / max_divergence
+
             return 1 - ((value - min_divergence) / (max_divergence - min_divergence))
 
         normalizer = np.vectorize(normalize)
-
+        print(users_divergences)
         users_divergences = normalizer(users_divergences)
 
         for i in range(num_of_users):

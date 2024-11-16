@@ -1,0 +1,8 @@
+418094330;371792988;Anderson e Flordelis são casados
+281413307;371792988;Flávio é filho biológico de Flordelis
+assaltante;371792988;Flordelis foi vítima de um assalto
+assaltante;418094330;Anderson foi vítima de um assalto
+assaltante;281413307;Flávio foi vítima de um assalto
+371792988;418094330;Flordelis é mãe adotiva de Anderson
+418094330;281413307;Anderson é pai adotivo de Flávio
+418094330;281413307;Anderson e Flávio são irmãos
