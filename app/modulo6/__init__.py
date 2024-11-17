@@ -21,7 +21,7 @@ class Modulo6:
                 degrees[conn["id_person_b"]] = 1
             else:
                 degrees[conn["id_person_b"]] += 1
-
+        # print(degrees)
         return degrees
 
     def __calc_np(self, np_value, max_np):

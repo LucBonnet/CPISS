@@ -2,5 +2,4 @@
 123456789;345678901;Francisco é filho de Maria
 123456789;456789012;Francisco é sobrinho de Diva
 234567890;345678901;Nelson e Maria são casados
-123456789;456789012;Francisco foi molestado por Diva
 345678901;456789012;Maria e Diva são irmãs

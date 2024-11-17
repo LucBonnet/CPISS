@@ -11,9 +11,9 @@ def main():
     create_database(reset_database)
 
     app = App(args.get("t"))
-    rank = app.execute(return_rank=False)
+    rank = app.execute(return_rank=True)
     for p in rank:
-        print(f"{p.document} - {p.name} - {p.participation_level} - {p.importance}")
+        print(f"{p.name} - {p.facts} - {p.participation_level} - {p.formatted_pl} - {p.importance}")
 
 if __name__ == "__main__":
     main()
