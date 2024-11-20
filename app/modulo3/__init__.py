@@ -60,7 +60,7 @@ class Modulo3:
                     db.insert(sql, (fact_id,))
                     db.close()
 
-                    sql = "INSERT INTO pessoa_fato (id_pessoa,id_fato) VALUES (?,?)"
+                    sql = "INSERT OR IGNORE INTO pessoa_fato (id_pessoa,id_fato) VALUES (?,?)"
                     db.connect()
                     db.insert(sql, (person_a_id, fact_id))
                     db.close()
