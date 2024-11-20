@@ -1,5 +1,9 @@
 567890123;123456789;Francisco é ex-funcionario de Pedro
-567890123;123456789;Francisco foi abusado por Pedro
 678901234;123456789;Francisco é ex-namorado de Laura
 678901234;123456789;Francisco teve uma experiencia traumatica por causa de Laura
 122345678;123456789;Francisco matou Isadora
+859012347;122345678;Rafael é amigo de Isadora
+859012347;caça-talentos;Rafael viu Isadora sair com um caça-talentos
+748901236;122345678;Bianca é amiga de Isadora
+748901236;caça-talentos;Bianca viu Isadora sair com um caça-talentos
+122345678;caça-talentos;caça-talentos saiu com Isadora

@@ -46,7 +46,8 @@ def create(reset=False):
             id_pessoa integer,
             id_fato integer,
             FOREIGN KEY (id_pessoa) REFERENCES pessoas(id) ON DELETE CASCADE,
-            FOREIGN KEY (id_fato) REFERENCES fatos(id) ON DELETE CASCADE
+            FOREIGN KEY (id_fato) REFERENCES fatos(id) ON DELETE CASCADE,
+            UNIQUE(id_pessoa, id_fato)
         );
     """
 

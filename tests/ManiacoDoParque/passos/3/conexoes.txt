@@ -12,3 +12,10 @@
 123456789;880123456;Francisco matou Raquel
 123456789;991234567;Francisco matou Selma
 123456789;343456789;Francisco matou Patrícia
+415678923;123456789;Gustavo viu Francisco sair com Márcia
+123456789;446789012;Francisco saiu com Márcia
+526789014;caça-talentos;Renata viu Raquel sair com um caça-talentos
+637890125;caça-talentos;Thiago viu Patrícia sair com um caça-talentos
+343456789;caça-talentos;caça-talentos saiu com Patrícia
+880123456;caça-talentos;caça-talentos saiu com Raquel
+123456789;caça-talentos;caça-talentos e Francisco são a mesma pessoa

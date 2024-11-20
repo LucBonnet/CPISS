@@ -1,3 +1,6 @@
 Pedro;567890123
 Laura;678901234
 Isadora;122345678
+Bianca;748901236
+Rafael;859012347
+Caça-talentos;caça-talentos
