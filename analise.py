@@ -26,7 +26,11 @@ def calc_auc(current_rank, expected_rank):
 
         score = 1 - (deviation / (len(current_rank) - 1))
 
-        curr_x = (expected_pos) / (len(expected_rank))
+        if len(expected_rank) > 1:
+            curr_x = (expected_pos - 1) / (len(expected_rank) - 1)
+        else:
+            curr_x = 0
+        
         x.append(curr_x)
         y.append(score)
 
@@ -92,14 +96,14 @@ def add_connections(test, expected_rank=None):
 
     # lista = lista[:100]
     
-    print(len(lista) + 1)
+    print(len(lista))
 
     y = []
     x = []
 
     times = 100
-    total = len(lista) + 1
-    for i in range(1, total):
+    total = len(lista)
+    for i in range(1, total + 1):
         # i -> Define quantas conexões serão adicionadas
         values = []
         for j in range(times):
@@ -144,6 +148,10 @@ def remove_connections(test, expected_rank):
     app = App(test)
     rank = app.execute(return_rank=True)
 
+    if expected_rank is None:
+        expected_rank = [p.document for p in rank.copy()]
+        print(expected_rank)
+
     area = calc_auc(rank, expected_rank)
     print("Área inicial:", area)
 
@@ -156,7 +164,7 @@ def remove_connections(test, expected_rank):
     y = []
     x = []
 
-    times = 1000
+    times = 100
     for i in range(1, len(connections) + 1):
         # i -> Define quantas conexões serão retiradas
         values = []
@@ -199,12 +207,17 @@ def add_person_with_facts(test, expected_rank):
     app = App(test)
     rank = app.execute(return_rank=True)
 
+    if expected_rank is None:
+        expected_rank = [p.document for p in rank.copy()]
+        print(expected_rank)
+
     area = calc_auc(rank, expected_rank)
     print("Área inicial:", area)
 
     app.current_state.get_state()
 
-    person_to_edit = [p for p in app.current_state.persons if p.up_id == 17][0]
+    person_to_edit = app.current_state.persons[-1]
+    print(person_to_edit)
 
     areas = []
 
@@ -248,7 +261,7 @@ def add_person_with_facts(test, expected_rank):
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(X, Y, Z, cmap='viridis')
 
-    ax.set_xlim([1, 10])  
+    ax.set_xlim([1, num_of_facts])  
     ax.set_ylim([0, 1]) 
     ax.set_zlim([0, 1])
 
@@ -261,57 +274,59 @@ def add_person_with_facts(test, expected_rank):
 def fera_da_penha():
     case_name = "FeraDaPenha"
 
-    args = args_parser()
-
-    reset_database = args.get("r")
-    create_database(reset_database)
+    create_database(True)
 
     expected_rank = ['456573409', '419976309', '288410774']
 
-
-    # add_connections(case_name, expected_rank)
-    # remove_connections(case_name, expected_rank)
+    add_connections(case_name, expected_rank)
+    remove_connections(case_name, expected_rank)
     add_person_with_facts(case_name, expected_rank)
 
 def aleatorio():
     case_name = "Aleatorio"
 
-    args = args_parser()
-
-    reset_database = args.get("r")
-    create_database(reset_database)
+    create_database(True)
 
     add_connections(case_name, None)
-    # remove_connections(case_name, expected_rank)
-    # add_person_with_facts(case_name, expected_rank)
+    remove_connections(case_name, None)
+    add_person_with_facts(case_name, None)
     
 def maniaco_do_parque():
     case_name = "ManiacoDoParque"
 
-    args = args_parser()
-
-    reset_database = args.get("r")
-    create_database(reset_database)
+    create_database(True)
 
     expected_rank = ['123456789']
+    
     add_connections(case_name, expected_rank)
-    # remove_connections(case_name, expected_rank)
-    # add_person_with_facts(case_name, expected_rank)
+    remove_connections(case_name, expected_rank)
+    add_person_with_facts(case_name, expected_rank)
 
 def flordelis():
     case_name = "Flordelis"
-    args = args_parser()
 
-    reset_database = args.get("r")
-    create_database(reset_database)
+    create_database(True)
 
     expected_rank = ['371792988', '291635957', '355509805']
+
     add_connections(case_name, expected_rank)
-    # remove_connections(case_name, expected_rank)
-    # add_person_with_facts(case_name, expected_rank)
+    remove_connections(case_name, expected_rank)
+    add_person_with_facts(case_name, expected_rank)
 
 def main():
-    flordelis()
+    args = args_parser()
+    case_name = args["t"]
+
+    cases = {
+        "Flordelis": flordelis,
+        "ManiacoDoParque": maniaco_do_parque,
+        "Aleatorio": aleatorio,
+        "FeraDaPenha": fera_da_penha
+    }
+
+    case_func = cases[case_name]
+    if case_func:
+        case_func()
 
 if __name__ == "__main__":
     main()

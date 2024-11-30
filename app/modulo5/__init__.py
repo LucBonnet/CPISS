@@ -85,7 +85,7 @@ class Modulo5:
 
 
     def main1(self):
-        print("Módulo 5")
+        print("Módulo 5\n")
 
         result_conns = Graph.findByStepWithConnections()
         persons_np, new_connections, graphs = self.group_connections(result_conns)

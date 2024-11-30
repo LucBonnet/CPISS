@@ -17,8 +17,13 @@ class Modulo4:
         self.print_data = print_data
 
     def main(self, facts_file_path=None):
-        print("Módulo 4")
+        print("Módulo 4\n")
 
         facts = get_data_from_file(facts_file_path)
-
-        Fact.update(facts)
+        
+        if len(facts) > 0:
+            print("Valores dos fatos")
+            for fact in facts:
+                print(fact)
+            Fact.update(facts)
+            print()

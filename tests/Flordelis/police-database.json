@@ -1,7 +1,7 @@
 {
   "pessoas": [
     {
-      "documento": "291635957",
+      "documento": "281413307",
       "nome": "Flávio"
     },
     {
@@ -43,51 +43,21 @@
   ],
   "conexoes": [
     {
-      "doc_pessoa_a": "291635957",
+      "doc_pessoa_a": "281413307",
       "doc_pessoa_b": "252639820",
       "descricao": "Flávio e Luciano são amigos",
       "peso": 1
     },
     {
-      "doc_pessoa_a": "291635957",
+      "doc_pessoa_a": "281413307",
       "doc_pessoa_b": "161919601",
       "descricao": "Flávio e Sandro são amigos",
       "peso": 1
     },
     {
-      "doc_pessoa_a": "291635957",
+      "doc_pessoa_a": "281413307",
       "doc_pessoa_b": "186007280",
       "descricao": "Flávio e Manuel são amigos",
-      "peso": 1
-    },
-    {
-      "doc_pessoa_a": "291635957",
-      "doc_pessoa_b": "308031507",
-      "descricao": "Flávio e Vitor são amigos",
-      "peso": 1
-    },
-    {
-      "doc_pessoa_a": "291635957",
-      "doc_pessoa_b": "306093807",
-      "descricao": "Flávio e Luiz são amigos",
-      "peso": 1
-    },
-    {
-      "doc_pessoa_a": "355509805",
-      "doc_pessoa_b": "252639820",
-      "descricao": "Lucas e Luciano são amigos",
-      "peso": 1
-    },
-    {
-      "doc_pessoa_a": "355509805",
-      "doc_pessoa_b": "161919601",
-      "descricao": "Lucas e Sandro são amigos",
-      "peso": 1
-    },
-    {
-      "doc_pessoa_a": "355509805",
-      "doc_pessoa_b": "186007280",
-      "descricao": "Lucas e Manuel são amigos",
       "peso": 1
     },
     {
@@ -101,17 +71,11 @@
       "doc_pessoa_b": "306093807",
       "descricao": "Lucas e Luiz são amigos",
       "peso": 1
-    },
-    {
-      "doc_pessoa_a": "291635957",
-      "doc_pessoa_b": "355509805",
-      "descricao": "Lucas e Flávio são irmãos ",
-      "peso": 1
     }
   ],
   "pessoa_fato": [
     {
-      "documento_pessoa": "291635957",
+      "documento_pessoa": "281413307",
       "tipo_fato": "1"
     },
     {

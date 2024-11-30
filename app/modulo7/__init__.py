@@ -205,6 +205,35 @@ class Modulo7:
 
         return persons
 
+    def print_rank(self, rank):
+        max_name_size = max([len(p.name) for p in rank])
+        rank_facts_size = max([len("; ".join([str(f) for f in p.facts])) for p in rank])
+
+        print("\nRanqueamento das unidades participantes:\n")
+
+        header = ("POSIÇÃO", "ID", "NOME", "NP", "FATOS", "IMPORTÂNCIA")
+        col_widths = (7, 4, max(max_name_size, 4), 6, max(rank_facts_size, 5), 12)
+        def center(value, width):
+            return str(value).center(width)
+        
+        print(" | ".join([center(header[i], col_widths[i]) for i in range(len(header))]))
+        print("-+-".join(["-" * col_widths[i] for i in range(len(header))]))
+
+        for i, person in enumerate(rank):
+            facts = "; ".join([str(f) for f in person.facts])
+
+            pos = f"{i+1}."
+            importance = f"{round(person.importance * 100, 8)}%"
+            print(" | ".join([
+                f"{pos:>{col_widths[0]}}", 
+                f"{center(person.up_id, col_widths[1])}",  
+                f"{person.name:<{col_widths[2]}}",
+                f"{center(person.participation_level, col_widths[3])}",
+                f"{center(facts,col_widths[4])}",
+                f"{center(importance, col_widths[5])}",
+            ]))
+        print()
+
     def main(self, return_rank=False):
         print("Módulo 7")
         
@@ -234,17 +263,16 @@ class Modulo7:
 
         self.persons = UP.getOrderByImportance()
 
-        if self.print_data:
-            print("\nRanqueamento das unidades participantes:")
         rank: list[UP] = []
         for i, up in enumerate(self.persons):
             rank.append(up)
-            if self.print_data:
-                print(f"{(i + 1)}. {up.up_id} - {up.name} - {formatImportance(up.importance)}%")
+
         if self.print_data:
             for p in rank:
                 path = self.calculaCaminho(p.up_id, p.importance)
                 print(path)
+
+        self.print_rank(rank)
 
         if return_rank:
             return rank

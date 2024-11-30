@@ -53,6 +53,11 @@ class Modulo3:
                 result = db_policia.execute(sql, (current_rg,))
                 db_policia.close()
 
+                current_person = UP.findByCode(current_rg)
+
+                if len(result) > 0:
+                    print(f"{current_person.name}: {len(result)} fatos")
+
                 for fact in result:
                     fact_id = fact[0]
                     sql = "INSERT OR IGNORE INTO fatos (id) VALUES (?)"
@@ -79,6 +84,7 @@ class Modulo3:
                 connections_with_person_b = list(filter(lambda conn: conn[2] not in self.visited_rg and conn[2] not in to_visit, connections_with_person_b))
                 
                 # Cadastrar conexões
+                print(f"\nConexões:")
                 for conn in connections_with_person_b:
 
                     if i >= limit:
@@ -92,11 +98,15 @@ class Modulo3:
                     graph_id = Graph.create(3)
                     Connection.create((person_a_id, person_b.up_id, conn[3], 1, graph_id))
 
+                    print(f"{conn[3]}")
+            
+                print()
+
                 newRgs = list(map(lambda conn: conn[2], connections_with_person_b))
                 to_visit.extend(newRgs)
 
     def main(self, persons):
-        print("Módulo 3")
+        print("Módulo 3\n")
         if len(persons) <= 0:
             return
 

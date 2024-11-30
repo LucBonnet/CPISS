@@ -45,15 +45,17 @@ class Modulo2:
         return persons, connections, victims
 
     def main(self, modulo2_initial_data=None):
-        print("Módulo 2")
+        print("\nMódulo 2")
         pessoas_arquivo, conexoes_arquivo, vitimas_arquivo = self.getDataFromFiles(modulo2_initial_data)
 
         created_persons = UP.create(pessoas_arquivo)
-        print("Pessoas cadastradas")
+        num_persons = len(created_persons)
+        print(f"Unidades participantes cadastradas: {num_persons} \n")
 
         if len(created_persons) == 0:
             return []
 
+        print("Conexões:")
         for conn in conexoes_arquivo:
             code_person_a, code_person_b, description = conn
 
@@ -69,9 +71,17 @@ class Modulo2:
 
             Connection.create((person_a.up_id, person_b.up_id, description, 1, graph_id))
             print(f"Adicionada conexão {person_a.name} - {person_b.name}")
+        
+        print()
 
-        for victim in vitimas_arquivo:
-            up_victim = UP.findByCode(victim)
-            Victim.create(up_victim.up_id)
+        if len(vitimas_arquivo) > 0:
+            print("Vítimas cadastradas:")
+
+            for victim in vitimas_arquivo:
+                up_victim = UP.findByCode(victim)
+                Victim.create(up_victim.up_id)
+                print(f"{up_victim.name}")
+            print()
+        
 
         return created_persons

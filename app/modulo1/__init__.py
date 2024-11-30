@@ -74,6 +74,10 @@ class Modulo1:
         self.graph_id = Graph.create(1)
         conn_desc = "Preferências semelhantes"
         Connection.create((user_a_id, user_b_id, conn_desc, divergence, self.graph_id))
+
+        person_a = UP.findById(user_a_id)
+        person_b = UP.findById(user_b_id)
+        print(f"{person_a.name} e {person_b.name} possuem preferências semelhantes")
         
     def compare_preferences(self):
         db.connect()
@@ -91,6 +95,7 @@ class Modulo1:
 
         max_divergence = None
         min_divergence = None
+        print("Divergências: ")
         for i in range(num_of_users):
             for j in range(i, num_of_users):
                 if i == j:
@@ -113,22 +118,21 @@ class Modulo1:
                 users_divergences[i][j] = divergence
                 users_divergences[j][i] = divergence
 
-                print(f"[{users_ids[i]}, {users_ids[j]}]: {divergence:.4f}")
+                person_a = UP.findById(users_ids[i])
+                person_b = UP.findById(users_ids[j])
+                print(f"{person_a.name}, {person_b.name}: {divergence:.4f}")
+        print()
 
         def normalize(value):
-            print(value)
-            print(min_divergence)
-            print(max_divergence)
-
             if max_divergence == min_divergence:
                 return value / max_divergence
 
             return 1 - ((value - min_divergence) / (max_divergence - min_divergence))
 
         normalizer = np.vectorize(normalize)
-        print(users_divergences)
         users_divergences = normalizer(users_divergences)
 
+        print("Conexões")
         for i in range(num_of_users):
             for j in range(i, num_of_users):
                 if i == j:
@@ -136,11 +140,12 @@ class Modulo1:
 
                 normalized_divergence = users_divergences[i][j]
                 self.set_divergence(users_ids[i], users_ids[j], normalized_divergence)
+        print()
 
         return users_divergences
 
     def main(self, users_images_path=None):
-        print("Módulo 1")
+        print("Módulo 1\n")
         self.users_path = users_images_path
 
         persons = UP.getAll()

@@ -21,7 +21,7 @@ class Modulo6:
                 degrees[conn["id_person_b"]] = 1
             else:
                 degrees[conn["id_person_b"]] += 1
-        # print(degrees)
+
         return degrees
 
     def __calc_np(self, np_value, max_np):
@@ -96,12 +96,11 @@ class Modulo6:
         return 1 - value
 
     def main(self):
-        print("Módulo 6")
+        print("Módulo 6\n")
         connections = Connection.get_all_unique()
         self.__set_omega(connections)
-        print("Omega calcluado")
+        print(f"w = {self.omega}")
         self.__set_np()
-        print("Níveis de participação atualizados")
 
         sql = "SELECT id FROM pessoas ORDER BY id"
         db.connect()
@@ -142,7 +141,7 @@ class Modulo6:
             db.execute(sql, (importance, up_id))
             db.close()
 
-        print("Atualização das importâncias")
+        print()
 
     def test(self, persons: list[UP], connections):
         self.__set_omega(connections)

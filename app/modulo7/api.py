@@ -13,7 +13,7 @@ def App(modulo7, port=3333):
     app.jinja_env.auto_reload = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     
-    app.run(port=port, debug=True)
+    app.run(port=port, debug=False)
 
 
 def compile_javascript():
@@ -68,4 +68,4 @@ def get_path(p_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
